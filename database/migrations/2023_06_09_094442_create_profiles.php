@@ -20,8 +20,8 @@ return new class extends Migration
                 $table->string('email')->nullable();
                 $table->integer('profile_pic_id')->nullable();
                 $table->boolean('status')->default(true);
-                $table->integer('created_by')->nullable();
-                $table->integer('updated_by')->nullable();
+                $table->integer('created_by')->nullable(true);
+                $table->integer('updated_by')->nullable(true);
                 $table->timestamps();
             });
         }

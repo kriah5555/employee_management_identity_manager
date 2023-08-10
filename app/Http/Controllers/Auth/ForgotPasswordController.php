@@ -62,15 +62,6 @@ class ForgotPasswordController extends Controller
         return view('auth.resetpassword', ['token' => $token]);
     }
 
-    $test = [
-        1 => 'Emp1',
-        2 => 'Emp2'
-    ]
-
-
-    foreach ($test as $id => $name) {
-        
-    }
     /**
      * Write code on Method
      *

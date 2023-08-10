@@ -16,12 +16,10 @@ return new class extends Migration
                 $table->id();
                 $table->integer('role_id')->nullable();
                 $table->integer('permission_id')->nullable();
-                $table->integer('created_by')->nullable();
-                $table->integer('updated_by')->nullable();
                 $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
                 $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
-                $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-                $table->foreign('updated_by')->references('id')->on('users')->onDelete('cascade');
+                $table->integer('created_by')->nullable(true);
+                $table->integer('updated_by')->nullable(true);
                 $table->boolean('status')->default(true);
                 $table->timestamps();
             });

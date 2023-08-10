@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+     
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -63,6 +68,7 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+            'username' => 'username',
         ],
 
         // 'users' => [
@@ -112,4 +118,6 @@ return [
 
     'password_timeout' => 10800,
 
+
+    'default_user_password' => env('DEFAULT_USER_PASSWORD', 'MmuX82bq9Q1YYLd4M39g'),
 ];

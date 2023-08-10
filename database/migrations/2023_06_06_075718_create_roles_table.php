@@ -16,8 +16,8 @@ return new class extends Migration
                 $table->id();
                 $table->string('title')->unique();
                 $table->boolean('status')->default(true);
-                $table->integer('created_by')->references('id')->on('users')->onDelete('cascade');
-                $table->integer('updated_by')->references('id')->on('users')->onDelete('cascade');
+                $table->integer('created_by')->nullable(true);
+                $table->integer('updated_by')->nullable(true);
                 $table->timestamps();
             });
         }

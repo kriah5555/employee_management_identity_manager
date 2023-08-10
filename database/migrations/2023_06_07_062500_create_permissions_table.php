@@ -17,9 +17,9 @@ return new class extends Migration
                 $table->string('title')->unique()->nullable();
                 $table->integer('category_id')->nullable();
                 $table->boolean('status')->default(true);
-                $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
-                $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-                $table->foreign('updated_by')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+                $table->integer('created_by')->nullable(true);
+                $table->integer('updated_by')->nullable(true);
                 $table->timestamps();
             });
         }

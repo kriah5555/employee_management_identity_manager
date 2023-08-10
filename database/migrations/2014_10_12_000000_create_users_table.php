@@ -16,14 +16,14 @@ return new class extends Migration
                 $table->id();
                 $table->string('username')->unique();
                 $table->string('password');
-                $table->string('email')->nullable();
+                // $table->string('email')->nullable();
+                // $table->enum('status', ['active', 'inactive'])->default('active');
                 $table->boolean('status')->default(true);
-                $table->unsignedBigInteger('created_by');
-                $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-                $table->unsignedBigInteger('updated_by');
-                $table->foreign('updated_by')->references('id')->on('users')->onDelete('cascade');
+                $table->integer('created_by')->nullable(true);
+                $table->integer('updated_by')->nullable(true);
                 $table->rememberToken();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
     }

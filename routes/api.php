@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Roles\RolesController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +33,21 @@ Route::get('/get-roles', [RolesController::class,'manageRole']);
 
 Route::get('/permissions/manage/{editid?}', [PermissionsController::class,'getPermissions']);
 
-Route::post('/create-user', [UserController::class, 'createUser']);
-
 Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/create-user', [AuthController::class, 'register']);
+
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('validate.api.token')->group(function () {
+
+    Route::get('/user-details', [UserController::class, 'getUserDetails']);
+
+    Route::get('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/validate-token', function () {
+        return response()->json([
+            'success' => true,
+        ]);
+    });
+});
