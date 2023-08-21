@@ -21,7 +21,7 @@ class LoginRequest extends ApiRequest
     {
         return [
             'username' => 'required|string|max:255',
-            'password' => ['nullable', 'string', 'min:8', 'max:255', new PasswordFormatRule]
+            'password' => 'required|string|max:255'
         ];
     }
     public function messages()
