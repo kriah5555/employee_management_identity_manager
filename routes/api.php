@@ -22,16 +22,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/testing', function () {
-  return response()->json([
-      'message' => 'Test API.'
-  ]);
+    return response()->json([
+        'message' => 'Test API.'
+    ]);
 });
 
-Route::post('/roles/create', [RolesController::class,'storeRole']);
+Route::post('/roles/create', [RolesController::class, 'storeRole']);
 
-Route::get('/get-roles', [RolesController::class,'manageRole']);
+Route::get('/get-roles', [RolesController::class, 'manageRole']);
 
-Route::get('/permissions/manage/{editid?}', [PermissionsController::class,'getPermissions']);
+Route::get('/permissions/manage/{editid?}', [PermissionsController::class, 'getPermissions']);
 
 Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
@@ -48,6 +48,7 @@ Route::middleware('validate.api.token')->group(function () {
     Route::get('/validate-token', function () {
         return response()->json([
             'success' => true,
+            'uid'     => Auth::guard('api')->user()->id
         ]);
     });
 });

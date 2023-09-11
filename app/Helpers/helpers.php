@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-  
+
 /**
  * Write code on Method
  *
@@ -19,5 +19,15 @@ if (!function_exists('generateUniqueUsername')) {
         }
 
         return $newUsername;
+    }
+}
+
+if (!function_exists('returnResponse')) {
+    function returnResponse($data, $status_code)
+    {
+        if (array_key_exists('message', $data)) {
+            $data['message'] = is_array($data['message']) ? $data['message'] : [$data['message']];
+        }
+        return response()->json($data, $status_code);
     }
 }
