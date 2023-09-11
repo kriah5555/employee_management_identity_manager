@@ -8,16 +8,23 @@ use Illuminate\Support\Facades\Hash;
 
 class SuperdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        $values = [
-            ['username' => 'admin', 'password' => Hash::make('Indii_2023$')],
-            ['username' => 'leonantheunis', 'password' => Hash::make('Indii_2023$')],
-            ['username' => 'sylviesymons', 'password' => Hash::make('Indii_2023$')],
+        $users = [
+            ['username' => 'admin', 'password' => 'Indii_2023$'],
+            ['username' => 'leonantheunis', 'password' => 'Indii_2023$'],
+            ['username' => 'sylviesymons', 'password' => 'Indii_2023$'],
         ];
-        User::insert($values);
+
+        foreach ($users as $user) {
+            // Check if the user already exists by username
+            if (!User::where('username', $user['username'])->exists()) {
+                // Create the user
+                User::create([
+                    'username' => $user['username'],
+                    'password' => Hash::make($user['password']),
+                ]);
+            }
+        }
     }
 }
