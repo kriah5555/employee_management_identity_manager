@@ -8,13 +8,14 @@ use App\Services\AuthService;
 use App\Http\Rules\CreateUserRequest;
 use App\Http\Rules\LoginRequest;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
 
     public function __construct()
     {
-       $this->auth_service = new AuthService();
+        $this->auth_service = new AuthService();
     }
 
     public function register(CreateUserRequest $request)
@@ -24,7 +25,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User created successfully',
-                'data' => $user
+                'data'    => $user
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -32,7 +33,7 @@ class AuthController extends Controller
                 'message' => $e->getMessage(),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-        
+
         return response()->json(['message' => 'User registered successfully']);
     }
     public function login(LoginRequest $request)
@@ -41,13 +42,13 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken($user->username)->accessToken;
             $data = [
-                'token' => $token,
-                'uid' => $user->id,
+                'token'    => $token,
+                'uid'      => $user->id,
                 'username' => $user->username,
             ];
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data'    => $data
             ]);
         }
         return response()->json([
@@ -68,7 +69,6 @@ class AuthController extends Controller
 
     public function validateAccessToken()
     {
-        
+
     }
 }
-

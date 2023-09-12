@@ -26,8 +26,8 @@ class RolesService
         // print_r($request->all());exit;
 
         $roleData = array_filter([
-            'title' => $request->title,
-            'status' => $request->status,
+            'title'      => $request->title,
+            'status'     => $request->status,
             'created_by' => env('USER_ID', 1),
             'updated_by' => env('USER_ID', 1)
         ], function ($value) {
@@ -41,14 +41,14 @@ class RolesService
                 $data = Roles::find($request->edit);
                 $data = $data->update($roleData);
                 RolesPermissions::where('role_id', $request->edit)->delete();
-                
+
             } elseif ($request->edit && $request->status) {
                 $data = Roles::find($request->edit);
                 $data = $data->update(['status' => $request->status === 'true' ? true : false]);
             } else {
                 $role_id = Roles::create($roleData)->role_id;
             }
-            
+
             if (!$request->status) {
                 $permissionObject = $this->constructPermissionObject($request->edit ? $request->edit : $role_id, $request);
                 $result = RolesPermissions::insert($permissionObject);
@@ -59,17 +59,17 @@ class RolesService
             $message = $request->edit ? 'edited' : 'created';
 
             $responseData = response()->json([
-                'status' => 200,
-                'message' => 'role '.$message.' successfully',
+                'status'  => 200,
+                'message' => 'role ' . $message . ' successfully',
             ], 200);
 
         } catch (\Throwable $th) {
             DB::rollback();
             // throw $th;
             $responseData = response()->json([
-                'status' => 500,
+                'status'  => 500,
                 'message' => 'Something went wrong',
-            ], 500);        
+            ], 500);
         }
         return $responseData;
     }
@@ -82,33 +82,34 @@ class RolesService
         $editid = $request->id;
         try {
             $roleDetails = DB::table('roles')->select('roles.*');
-            $rolesPermissionsCount = RolesPermissions::where('role_id','=',$editid)->where('status','=',true)->count();
-            if ($editid ) {
+            $rolesPermissionsCount = RolesPermissions::where('role_id', '=', $editid)->where('status', '=', true)->count();
+            if ($editid) {
                 if ($rolesPermissionsCount === 0) {
-                    $role_name = Roles::where('role_id','=',$editid)->pluck('title');
+                    $role_name = Roles::where('role_id', '=', $editid)->pluck('title');
                 }
                 $roleDetails->where('roles.role_id', $editid)
-                ->leftJoin('roles_permissions','roles_permissions.role_id', '=','roles.role_id');
-                $roleDetails->where('roles_permissions.status','=',true);
+                    ->leftJoin('roles_permissions', 'roles_permissions.role_id', '=', 'roles.role_id');
+                $roleDetails->where('roles_permissions.status', '=', true);
                 $roleDetails->leftJoin('permissions', 'permissions.permission_id', '=', 'roles_permissions.permission_id')
-                ->select('roles_permissions.*',
-                    'roles.title as role_name',
-                    'permissions.*',
-                );
-            } 
+                    ->select(
+                        'roles_permissions.*',
+                        'roles.title as role_name',
+                        'permissions.*',
+                    );
+            }
 
             $roleDetails = $roleDetails->get();
-            
+
             $responseData = response()->json([
-                'status' => 200,
-                'message' => 'data fetched successfully',
+                'status'    => 200,
+                'message'   => 'data fetched successfully',
                 'role_name' => $role_name,
-                'data' => $roleDetails
+                'data'      => $roleDetails
             ]);
         } catch (\Throwable $th) {
             throw $th;
             $responseData = response()->json([
-                'status' => 500,
+                'status'  => 500,
                 'message' => 'something went wrong'
             ]);
         }
@@ -121,7 +122,7 @@ class RolesService
         $permissionObject = [];
         $currentDateTime = Carbon::now()->toDateTimeString();
 
-        foreach($permissions as $key => $value) {
+        foreach ($permissions as $key => $value) {
             $permissionObject[$key]['role_id'] = $role_id;
             $permissionObject[$key]['permission_id'] = $value;
             $permissionObject[$key]['created_by'] = env('USER_ID', 1);

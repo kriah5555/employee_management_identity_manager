@@ -9,11 +9,12 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Traits\HasPermissions;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, LogsActivity, HasRoles, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -48,9 +49,9 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['username', 'password', 'status'])
-        ->logOnlyDirty(['username', 'password', 'status'])
-        ->dontSubmitEmptyLogs();
+            ->logOnly(['username', 'password', 'status'])
+            ->logOnlyDirty(['username', 'password', 'status'])
+            ->dontSubmitEmptyLogs();
     }
 
     public function isActive(): bool
@@ -63,8 +64,13 @@ class User extends Authenticatable
         return $this->where('username', $username)->first();
     }
 
-    // public function validateForPassportPasswordGrant($password)
-    // {
-    //     return Hash::check($password, $this->password);
-    // }
+    public function isSuperadmin(): bool
+    {
+        return $this->is_superadmin;
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->is_staff;
+    }
 }
