@@ -18,6 +18,12 @@ class SuperdminSeeder extends Seeder
             ['username' => 'leonantheunis', 'password' => Hash::make('Indii_2023$')],
             ['username' => 'sylviesymons', 'password' => Hash::make('Indii_2023$')],
         ];
+        // foreach($values as $value) {
+        //     User::updateOrCreate(
+        //         ['username' => $value['username']],
+        //         $value
+        //     );
+        // }
         User::insert($values);
     }
 }

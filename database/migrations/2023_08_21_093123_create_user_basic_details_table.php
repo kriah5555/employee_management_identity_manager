@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('profiles')) {
-            Schema::create('profiles', function (Blueprint $table) {
+        if (!Schema::hasTable('user_basic_details')) {
+            Schema::create('user_basic_details', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->references('id')->on('users');
                 $table->string('first_name');
@@ -20,11 +20,17 @@ return new class extends Migration
                 $table->string('email')->nullable();
                 $table->string('mobile')->nullable();
                 $table->string('rsz_number');
+                $table->date('birth_date');
+                $table->date('birth_place');
+                $table->string('bank_account');
                 $table->integer('gender_id')->references('id')->on('genders');
+                $table->string('nationality')->references('id')->on('country_nationality');
+                $table->integer('language_id')->references('id')->on('languages');
                 $table->boolean('status')->default(true);
-                $table->integer('created_by')->nullable(true);
-                $table->integer('updated_by')->nullable(true);
+                $table->integer('created_by')->default(0);
+                $table->integer('updated_by')->default(0);
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
     }
@@ -34,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profiles');
+        Schema::dropIfExists('user_basic_details');
     }
 };
