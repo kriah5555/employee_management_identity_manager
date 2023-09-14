@@ -23,9 +23,9 @@ return new class extends Migration
                 $table->date('birth_date');
                 $table->date('birth_place');
                 $table->string('bank_account');
-                $table->integer('gender_id')->references('id')->on('genders');
-                $table->string('nationality')->references('id')->on('country_nationality');
-                $table->integer('language_id')->references('id')->on('languages');
+                $table->foreignId('gender_id')->references('id')->on('genders');
+                $table->foreignId('nationality_id')->references('id')->on('country_nationalities');
+                $table->foreignId('language_id')->references('id')->on('languages');
                 $table->boolean('status')->default(true);
                 $table->integer('created_by')->default(0);
                 $table->integer('updated_by')->default(0);

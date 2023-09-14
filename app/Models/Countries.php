@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\CountryNationality;
 
 class Countries extends Model
 {
@@ -57,4 +58,10 @@ class Countries extends Model
         'created_at',
         'updated_at',
         'deleted_at'
-    ];}
+    ];
+
+    public function nationality()
+    {
+        return $this->hasOne(CountryNationality::class, 'country_id');
+    }
+}

@@ -55,4 +55,10 @@ class Languages extends Model
         'created_at',
         'updated_at',
         'deleted_at'
-    ];}
+    ];
+
+    public static function getLanguages()
+    {
+        return self::select(['id', 'name as value', 'code'])->where('status', 1)->get()->toArray();
+    }
+}

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('house_number');
             $table->string('city');
             $table->string('postal_code');
-            $table->integer('country_id')->references('id')->on('countries');
+            $table->foreignId('country_id')->references('id')->on('countries');
             $table->string('lattitude')->nullable();
             $table->string('longtitude')->nullable();
             $table->date('from');

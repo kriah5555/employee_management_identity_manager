@@ -55,4 +55,9 @@ class Gender extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    public static function getGenders()
+    {
+        return Gender::select(['id', 'name as value'])->where('status', 1)->get()->toArray();
+    }
 }

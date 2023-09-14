@@ -66,10 +66,25 @@ Route::controller(LanguagesController::class)->group(function() {
     Route::post('language/delete/{language}', 'destroy');
 });
 
-Route::controller(MaritalStatusController::class)->group(function() {
-    Route::post('marital/all', 'index');
-    Route::post('marital/store', 'store');
-    Route::post('marital/{marital_status}', 'show');
-    Route::post('marital/edit/{marital_status}', 'edit');
-    Route::post('marital/delete/{marital_status}', 'destroy');
+// Route::controller(MaritalStatusController::class)->group(function() {
+//     Route::post('marital/all', 'index');
+//     Route::post('marital/store', 'store');
+//     Route::post('marital/{marital_status}', 'show');
+//     Route::post('marital/edit/{marital_status}', 'edit');
+//     Route::post('marital/delete/{marital_status}', 'destroy');
+// });
+
+Route::group([
+    // 'middleware' => ['admin','auth'],
+    //if you have one more folder inside Controllers you can specify namespaces too
+    'controller' => MaritalStatusController::class,
+    'prefix' => 'marital',
+    ], function() {
+        Route::post('all', 'index');
+        Route::post('store', 'store');
+        Route::post('/{marital_status}', 'show');
+        Route::post('edit/{marital_status}', 'edit');
+        Route::post('delete/{marital_status}', 'destroy');
 });
+
+Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);

@@ -55,4 +55,9 @@ class MaritalStatus extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    public static function getMaritalStatus()
+    {
+        return self::select(['id', 'name as value'])->where('status', 1)->get()->toArray();
+    }
 }

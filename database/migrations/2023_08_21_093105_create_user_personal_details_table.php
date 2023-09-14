@@ -15,7 +15,7 @@ return new class extends Migration
             Schema::create('user_personal_details', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->references('id')->on('users');
-                $table->string('marital_status_id')->references('id')->on('marital_statuses');
+                $table->foreignId('marital_status_id')->references('id')->on('marital_statuses');
                 $table->integer('dependent_spouse_id')->default(0);
                 $table->integer('dependent_children')->default(0);
                 $table->string('personal_mail')->nullable();

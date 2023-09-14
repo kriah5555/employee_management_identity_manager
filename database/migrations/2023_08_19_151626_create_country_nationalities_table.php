@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('country_nationalities', function (Blueprint $table) {
             $table->id();
-            $table->integer('country_id')->references('id')->on('countries');
+            $table->foreignId('country_id')->references('id')->on('countries');
             $table->string('nationality');
             $table->integer('status')->default(1);
             $table->timestamps();

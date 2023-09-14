@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// use App\Services\UserService;
+use App\Services\UserService;
 use App\Http\Rules\CreateUserRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +22,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        // $this->user_service = new UserService();
+        $this->user_service = new UserService();
     }
      
     public function createUser(CreateUserRequest $request): JsonResponse
@@ -73,4 +73,10 @@ class UserController extends Controller
             'data' => $user
         ], 200);
     }
+
+    public function getEmployeeCreationOptions()
+    {
+        return UserService::getEmployeeOptionsService();
+    }
+
 }
