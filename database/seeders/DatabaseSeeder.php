@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\PermissionsSeeder;
 use Database\Seeders\{
     CountriesSeeder,
+    GenderSeeder,
     LanguagesSeeder,
+    MaritalStatusSeeder,
     RolesSeeder,
     SuperdminSeeder,
     FileTypesSeeder
@@ -21,7 +23,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CountriesSeeder::class,
+            GenderSeeder::class,
             LanguagesSeeder::class,
+            MaritalStatusSeeder::class,
             RolesSeeder::class,
             FileTypesSeeder::class,
             SuperdminSeeder::class

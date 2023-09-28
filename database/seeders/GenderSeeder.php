@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Gender;
+use App\Models\Employee\Gender;
 
 class GenderSeeder extends Seeder
 {
@@ -18,7 +18,7 @@ class GenderSeeder extends Seeder
             ['name' => 'Female'],
             ['name' => 'Others'],
         ];
-        foreach($values as $value) {
+        foreach ($values as $value) {
             Gender::insert($value);
         }
     }

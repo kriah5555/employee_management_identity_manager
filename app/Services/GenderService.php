@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Repositories\GenderRepository;
-use App\Models\Gender;
+use App\Models\Employee\Gender;
 
 class GenderService
 {

@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Repositories\MaritalStatusRepository;
-use App\Models\MaritalStatus;
+use App\Models\Employee\MaritalStatus;
 
 class MaritalStatusService
 {

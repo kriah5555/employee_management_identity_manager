@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\MaritalStatus;
+use App\Models\Employee\MaritalStatus;
 
 class MaritalStatusSeeder extends Seeder
 {
@@ -26,4 +26,3 @@ class MaritalStatusSeeder extends Seeder
         }
     }
 }
- 

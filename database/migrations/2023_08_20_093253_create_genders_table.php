@@ -13,12 +13,12 @@ return new class extends Migration {
         Schema::create('genders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->smallInteger('sort_order');
-            $table->boolean('status')->default(true);
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
-            $table->timestamps();
+            $table->integer('status')->default(1);
             $table->softDeletes();
+            $table->timestamps();
+            $table->integer('created_by')->default(0);
+            $table->integer('updated_by')->default(0);
+            $table->integer('deleted_by')->default(0)->nullable();
         });
     }
 

@@ -30,7 +30,7 @@ class UserAddressDetails extends Model
      * @var array
      */
 
-     protected $fillable = [
+    protected $fillable = [
         'user_id',
         'street',
         'house_number',

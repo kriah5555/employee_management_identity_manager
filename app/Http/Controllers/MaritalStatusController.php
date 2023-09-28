@@ -2,106 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\MaritalStatusService;
-use Illuminate\Http\JsonResponse;
-use App\Http\Rules\MaritalStatusRequest;
 use App\Models\MaritalStatus;
-
+use Illuminate\Http\Request;
 
 class MaritalStatusController extends Controller
 {
-    protected $maritalStatusService;
-
-    public function __construct(MaritalStatusService $maritalStatusService)
-    {
-        $this->maritalStatusService = $maritalStatusService;
-    }
-
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        return returnResponse(
-            [
-                'success' => true,
-                'data'    => $this->maritalStatusService->index(),
-            ],
-            JsonResponse::HTTP_OK,
-        );
+        $data = MaritalStatus::all();
+        return response()->json([
+            'success' => true,
+            'data'    => $data,
+        ]);
     }
 
-    public function show($id)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        return returnResponse(
-            [
+        try {
+            $marital_status = new MaritalStatus();
+            $marital_status->name = $request->name;
+            $marital_status->status = 1;
+            $id = $marital_status->save();
+            return response()->json([
                 'success' => true,
-                'data'    => $this->maritalStatusService->show($id),
-            ],
-            JsonResponse::HTTP_OK,
-        );
-    }
-
-    public function edit($id)
-    {
-        return returnResponse(
-            [
-                'success' => true,
-                'data'    => $this->maritalStatusService->edit($id),
-            ],
-            JsonResponse::HTTP_OK,
-        );
-    }
-
-    public function store(MaritalStatusRequest $request)
-    {
-        return returnResponse(
-            [
-                'success' => true,
-                'message' => 'Marital status created successfully',
-                'data'    => $this->maritalStatusService->store($request->validated())
-            ],
-            JsonResponse::HTTP_OK,
-        );
-    }
-
-    public function update(MaritalStatusRequest $request, MaritalStatus $maritalStatus)
-    {
-        if ($this->maritalStatusService->update($maritalStatus, $request->validated())) {
-            return returnResponse(
-                [
-                    'success' => true,
-                    'message' => 'Marital status updated successfully',
-                ],
-                JsonResponse::HTTP_OK,
-            );
-        } else {
-            return returnResponse(
-                [
-                    'success' => false,
-                    'message' => 'Failed to update',
-                ],
-                JsonResponse::HTTP_OK,
-            );
+                'message' => 'Marital status create successfully.',
+                'data'    => $id,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Marital status creation failed',
+                "error"   => $e->message,
+            ]);
         }
+
     }
 
-    public function destroy(MaritalStatus $maritalStatus)
+    /**
+     * Display the specified resource.
+     */
+    public function show(MaritalStatus $marital_status)
     {
-        if ($this->maritalStatusService->delete($maritalStatus)) {
-            return returnResponse(
-                [
-                    'success' => true,
-                    'message' => 'Marital status deleted',
-                ],
-                JsonResponse::HTTP_OK,
-            );
-        } else {
-            return returnResponse(
-                [
-                    'success' => false,
-                    'message' => 'Failed to delete',
-                ],
-                JsonResponse::HTTP_OK,
-            );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Marital status sent successfully.',
+            'data'    => $marital_status,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Request $request, MaritalStatus $marital_status)
+    {
+        $data = $request->all();
+        $marital_status->update($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Marital status updated successfully',
+            'data'    => $marital_status,
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(MaritalStatus $marital_status)
+    {
+        try {
+            $marital_status->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Marital status deleted successfully.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong...',
+                "error"   => $e->message,
+            ]);
         }
     }
 }

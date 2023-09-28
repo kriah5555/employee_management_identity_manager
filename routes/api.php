@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Permissions\PermissionsController;
 use App\Http\Controllers\{GenderController, LanguagesController, MaritalStatusController};
 
 /*
@@ -28,7 +28,11 @@ Route::get('/testing', function () {
     ]);
 });
 
-Route::get('/permissions/setup', [PermissionsController::class, 'testing']);
+Route::post('/roles/create', [RolesController::class, 'storeRole']);
+
+Route::get('/get-roles', [RolesController::class, 'manageRole']);
+
+Route::get('/permissions/manage/{editid?}', [PermissionsController::class, 'getPermissions']);
 
 Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
@@ -48,6 +52,14 @@ Route::middleware('validate.api.token')->group(function () {
             'uid'     => Auth::guard('api')->user()->id
         ]);
     });
+});
+
+Route::controller(GenderController::class)->group(function () {
+    Route::post('gender/all', 'index');
+    Route::post('gender/store', 'store');
+    Route::post('gender/{gender}', 'show');
+    Route::post('gender/edit/{gender}', 'edit');
+    Route::post('gender/delete/{gender}', 'destroy');
 });
 
 Route::controller(LanguagesController::class)->group(function () {
@@ -106,12 +118,3 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 // Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
 // Route::post('employee/create', [UserController::class, 'createEmployee']);
 // Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
-
-
-Route::group(['middleware' => 'setactiveuser'], function () {
-
-    Route::resource('genders', GenderController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
-
-    Route::resource('marital-statuses', MaritalStatusController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
-
-});

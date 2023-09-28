@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Services;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +10,6 @@ use App\Models\Users\UserRoles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers;
-use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
@@ -27,15 +26,6 @@ class AuthService
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
-        }
-    }
-
-    public function setActiveUserByUid($uid)
-    {
-        $user = User::findOrFail($uid);
-        if ($user) {
-            // Log in the user
-            Auth::login($user);
         }
     }
 

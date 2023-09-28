@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Auth\AuthService;
+use App\Services\AuthService;
 use App\Http\Rules\CreateUserRequest;
 use App\Http\Rules\LoginRequest;
 use Illuminate\Http\JsonResponse;
