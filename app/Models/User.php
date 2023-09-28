@@ -69,8 +69,13 @@ class User extends Authenticatable
         return $this->is_superadmin;
     }
 
-    public function isStaff(): bool
+    public function isAdmin(): bool
     {
-        return $this->is_staff;
+        return $this->is_admin;
+    }
+
+    public function isModerator(): bool
+    {
+        return $this->is_moderator;
     }
 }

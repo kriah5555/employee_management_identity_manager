@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Permissions\PermissionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,11 +27,7 @@ Route::get('/testing', function () {
     ]);
 });
 
-Route::post('/roles/create', [RolesController::class, 'storeRole']);
-
-Route::get('/get-roles', [RolesController::class, 'manageRole']);
-
-Route::get('/permissions/manage/{editid?}', [PermissionsController::class, 'getPermissions']);
+Route::get('/permissions/setup', [PermissionsController::class, 'testing']);
 
 Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
