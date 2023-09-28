@@ -18,7 +18,7 @@ class FileTypesSeeder extends Seeder
             ['name' => 'id_card'],
         ];
         foreach($values as $value) {
-            FileTypes::insert($value);
+            FileTypes::create($value);
         }  
     }
 }
