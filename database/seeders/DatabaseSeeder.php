@@ -4,9 +4,18 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\SuperdminSeeder;
-use Database\Seeders\RolesSeeder;
+// use Database\Seeders\SuperdminSeeder;
+// use Database\Seeders\RolesSeeder;
 use Database\Seeders\PermissionsSeeder;
+use Database\Seeders\{
+    CountriesSeeder,
+    GenderSeeder,
+    LanguagesSeeder,
+    MaritalStatusSeeder,
+    RolesSeeder,
+    SuperdminSeeder,
+    FileTypesSeeder
+};
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,5 +33,14 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        $this->call([
+            CountriesSeeder::class,
+            GenderSeeder::class,
+            LanguagesSeeder::class,
+            MaritalStatusSeeder::class,
+            RolesSeeder::class,
+            FileTypesSeeder::class,
+            SuperdminSeeder::class
+        ]);
     }
 }
