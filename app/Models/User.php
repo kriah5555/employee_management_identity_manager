@@ -24,6 +24,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'password',
+        // 'email',
         'status',
         'created_by',
         'updated_by'
@@ -73,4 +74,14 @@ class User extends Authenticatable
     {
         return $this->is_staff;
     }
+
+    public function checkUserNameExist($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    // public function validateForPassportPasswordGrant($password)
+    // {
+    //     return Hash::check($password, $this->password);
+    // }
 }

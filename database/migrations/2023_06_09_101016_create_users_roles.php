@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // if (!Schema::hasTable('users_roles')) {
-        //     Schema::create('users_roles', function (Blueprint $table) {
-        //         $table->id();
-        //         $table->integer('user_id');
-        //         $table->integer('role_id');
-        //         $table->timestamps();
-        //     });
-        // }
+        if (!Schema::hasTable('users_roles')) {
+            Schema::create('users_roles', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->references('id')->on('users');
+                $table->string('roles');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use App\Http\Rules\CreateUserRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\UserService;
+use App\Http\Rules\{CreateEditEmployee, CreateUserRequest, InviteEmployee};
+
 
 class UserController extends Controller
 {
@@ -73,4 +74,50 @@ class UserController extends Controller
             'data' => $user
         ], 200);
     }
+
+    public function getEmployeeCreationOptions()
+    {
+        return UserService::getEmployeeOptionsService();
+    }
+
+    public function updateEmployee()
+    {
+
+    }
+
+    public function createEmployee(CreateEditEmployee $employee_details)
+    {
+        try {
+            $inputData = $employee_details->validated();
+            $user = $this->user_service->createEmployeeService($inputData);
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'data' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function inviteEmployee(InviteEmployee $invite_employee)
+    {
+        try {
+            $user = $this->user_service->inviteEmployee($invite_employee->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'data' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
