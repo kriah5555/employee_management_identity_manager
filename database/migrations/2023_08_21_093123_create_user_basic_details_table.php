@@ -21,7 +21,7 @@ return new class extends Migration
                 $table->string('mobile')->nullable();
                 $table->string('rsz_number');
                 $table->date('birth_date');
-                $table->date('birth_place');
+                $table->string('birth_place');
                 $table->string('bank_account');
                 $table->foreignId('gender_id')->references('id')->on('genders');
                 $table->foreignId('nationality_id')->references('id')->on('country_nationalities');

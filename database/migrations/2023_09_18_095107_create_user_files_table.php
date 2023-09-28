@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('country_nationalities', function (Blueprint $table) {
+        Schema::create('user_files', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id')->references('id')->on('countries');
-            $table->string('nationality');
-            $table->integer('status')->default(1);
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('file_id')->references('id')->on('files');
+            $table->foreignId('file_type_id')->references('id')->on('file_types');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('country_nationalities');
+        Schema::dropIfExists('user_files');
     }
 };

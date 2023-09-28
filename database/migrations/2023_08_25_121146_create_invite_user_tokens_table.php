@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('token');
             $table->string('expire_at');
             $table->string('status')->default(1);
-            $table->integer('invite_role')->references('id')->on('roles');
-            $table->integer('invite_by')->references('id')->on('users');
+            $table->string('invite_role')->nullable();
+            $table->foreignId('invite_by')->references('id')->on('users');
+            $table->integer('company_id')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

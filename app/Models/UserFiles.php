@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UserBasicDetails extends Model
+
+class UserFiles extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -15,7 +16,7 @@ class UserBasicDetails extends Model
      *
      * @var string
      */
-    protected $table = 'user_basic_details';
+    protected $table = 'user_files';
 
     /**
      * The primary key associated with the table.
@@ -32,20 +33,8 @@ class UserBasicDetails extends Model
 
      protected $fillable = [
         'user_id',
-        'first_name',
-        'last_name',
-        'email',
-        'mobile',
-        'rsz_number',
-        'birth_date',
-        'birth_place',
-        'bank_account',
-        'gender_id',
-        'nationality_id',
-        'language_id',
-        'status',
-        'created_by',
-        'updated_by',
+        'file_id',
+        'file_type_id'
     ];
 
     /**
@@ -64,5 +53,4 @@ class UserBasicDetails extends Model
         'created_at',
         'updated_at',
         'deleted_at'
-    ];
-}
+    ];}

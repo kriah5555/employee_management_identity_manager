@@ -15,7 +15,7 @@ class InviteUserTokens extends Model
      *
      * @var string
      */
-    protected $table = 'genders';
+    protected $table = 'invite_user_tokens';
 
     /**
      * The primary key associated with the table.
@@ -31,11 +31,12 @@ class InviteUserTokens extends Model
      */
 
      protected $fillable = [
-        'name',
-        'status',
-        'created_by',
-        'updated_by',
-        'deleted_by',
+        'mail',
+        'token',
+        'expire_at',
+        'invite_role',
+        'invite_by',
+        'company_id'
     ];
 
     /**

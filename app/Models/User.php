@@ -7,13 +7,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
+// use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'password',
+        // 'email',
         'status',
         'created_by',
         'updated_by'
@@ -59,6 +60,11 @@ class User extends Authenticatable
     }
 
     public function findForPassport($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    public function checkUserNameExist($username)
     {
         return $this->where('username', $username)->first();
     }

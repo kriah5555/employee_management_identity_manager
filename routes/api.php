@@ -6,6 +6,7 @@ use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\{GenderController, LanguagesController, MaritalStatusController};
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,7 +32,7 @@ Route::get('/testing', function () {
 // Route::get('/get-roles', [RolesController::class,'manageRole']);
 // Route::get('/permissions/manage/{editid?}', [PermissionsController::class,'getPermissions']);
 
-Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
+// Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
 Route::post('/create-user', [AuthController::class, 'register']);
 
@@ -87,4 +88,30 @@ Route::group([
         Route::post('delete/{marital_status}', 'destroy');
 });
 
+
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('user', 'AuthController@user');
+    Route::post('logout', 'AuthController@logout');
+});
+
+Route::group([
+    // 'middleware' => ['admin','auth'],
+    //if you have one more folder inside Controllers you can specify namespaces too
+    'controller' => UserController::class,
+    'prefix' => 'user',
+    ], function() {
+        Route::post('create', 'createUser');
+        Route::post('all', 'manageUsers');
+        // Route::post('edit/{marital_status}', 'edit');
+        // Route::post('delete/{marital_status}', 'destroy');
+});
+
 Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
+Route::post('employee/create', [UserController::class, 'createEmployee']);
+Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
+
+// Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
+// Route::post('employee/create', [UserController::class, 'createEmployee']);
+// Route::post('employee/invite', [UserController::class, 'inviteEmployee']);

@@ -4,150 +4,39 @@ namespace App\Services;
 
 // use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// use App\Models\User;
-use App\Models\Users\Profiles;
-use App\Models\Users\UserRoles;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-// use App\Helpers;
-use App\Models\{Countries, CountryNationality, Gender, Languages, MaritalStatus, User};
+use App\Http\Rules\{CreateEditEmployee, CreateUserRequest};
+use App\Models\{
+    Countries, CountryNationality, Gender, Languages, MaritalStatus, User,
+    UserBasicDetails, UserPersonalDetails, UserAddressDetails, InviteUserTokens
+};
+use Symfony\Component\Uid\Ulid;
+use Illuminate\Support\Str;
+
+use function PHPSTORM_META\type;
 
 class UserService
 {
 
     protected $country;
     protected $nationality;
+    protected $ulid;
+    protected $userObject;
+    protected $basic;
+    protected $personal;
+    protected $invite;
+
 
     public function __construct()
     {
         $this->country = new Countries();
         $this->nationality = new CountryNationality();
+        $this->ulid = new Ulid();
+        $this->userObject = new User();
+        $this->basic = new UserBasicDetails();
+        $this->personal = new UserPersonalDetails();
+        $this->invite =  new InviteUserTokens();
+
     }
-
-    public function createUser($values)
-    {
-        try {
-            DB::beginTransaction();
-            $values['username'] = generateUniqueUsername($values['username']);
-            $values['password'] = Hash::make(config('auth.default_user_password'));
-            $user = User::create($values);
-            DB::commit();
-            return $user;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-    public function updateUser()
-    {
-        $profileUpdateData = [];
-        $userData = [];
-        if ($request->has('username')) {
-            $userData['username'] = $request->username;
-        }
-    
-        if ($request->has('user_status')) {
-            $userData['status'] = $request->user_status;
-        }
-        if ($request->has('new_password')) {
-            $oldPassword = $request->old_password;
-            $newPassword = $request->new_password;
-
-            $user = User::find($request->edit);
-            
-            if (Hash::check($oldPassword, $user->password)) {
-                $userData['password'] =  Hash::make($newPassword);
-            }
-        }
-        
-        $updateuser = User::where('user_id', $request->edit)->update($userData);
-
-        if ($request->has('first_name')) {
-            $profileUpdateData['first_name'] = $request->first_name;
-        }
-    
-        if ($request->has('last_name')) {
-            $profileUpdateData['last_name'] = $request->last_name;
-        }
-    
-    
-        if ($request->has('supervisor')) {
-            $profileUpdateData['supervisor_id'] = $request->supervisor;
-        }
-    
-        if ($request->has('profile_pic')) {
-            $profileUpdateData['profile_pic_id'] = $request->profile_pic;
-        }
-    
-        if ($request->has('profile_status')) {
-            $profileUpdateData['status'] = $request->profile_status;
-        }
-
-        // Update first_name and last_name in the profiles table
-        $updateprofile = Profiles::where('user_id', $request->edit)->update($profileUpdateData);
-
-        if (is_int($request->role)) {
-            $request->role = [$request->role];
-        }
-
-        if ($request->has('role')) {
-            UserRoles::where('user_id', $request->edit)->delete();
-            foreach ($request->role as $role) {
-                $userrole = new UserRoles();
-                $userrole->user_id = $request->edit;
-                $userrole->role_id = $role['value'];
-
-                if (!$userrole->save()) {
-                    $issaved = false;
-                }
-            }
-        }
-
-        if ($updateuser && $updateprofile) {
-            $issaved = true;
-        }
-    }
-    
-    public function manageUserService($userid = null, $supervisor = null)
-    {
-        $supervisorRoleId = env('SUPERVISOR_ID');
-        $users = User::query();
-
-        if ($userid) { // fetching a particular user
-            $users->where('users.user_id', $userid);
-        }
-        $users->leftJoin('profiles', 'users.user_id', '=', 'profiles.user_id')
-        ->leftJoin('users_roles', 'users.user_id', '=', 'users_roles.user_id')
-        ->leftJoin('roles', 'users_roles.role_id', '=', 'roles.role_id')
-        ->select(
-            'users.*',
-            'profiles.*',
-            DB::raw('JSON_AGG(roles) AS roles')
-        )
-        ->groupBy('users.user_id', 'profiles.profile_id')
-        ->orderBy('users.created_at', 'desc');
-
-        $data = $users->get();
-        // Convert the roles column from JSON string to array of objects
-        foreach ($data as $item) {
-            $item->roles = json_decode($item->roles);
-        }
-
-        if ($supervisor) {
-            $supervisorUsers = collect($data)->filter(function ($item) use ($supervisorRoleId) {
-                return $item->roles && collect($item->roles)->contains('role_id', $supervisorRoleId);
-            })->toArray(); // Supervisor users
-            
-            return [
-                'supervisor_users' => $supervisorUsers,
-                'all_users' => $data->toArray()
-            ];
-        }
-
-        return $data;
-    }
-
 
     public static function formatCountryAndNationality($raw)
     {
@@ -167,7 +56,6 @@ class UserService
         return $data;
     }
 
-
     public static function getEmployeeOptionsService()
     {
         //Countries, CountryNationality, Gender, Languages, MaritalStatus, User
@@ -183,9 +71,75 @@ class UserService
         $data['dependent_spouse'] = ['yes' => 'Yes', 'no' => 'No'];
         return $data;
     }
+    
+    public function createUserName($userName, $flag = null)
+    {
+        
+        if ($this->userObject->checkUserNameExist($userName.$flag) == null)
+        {
+            return $userName.$flag;
+        } else {
+            return $this->createUserName($userName, $flag+1);
+        }
+    }
 
-    public function removeExtraColumns($data)
+    public function createEmployeeService($employee_details)
+    {
+        $userName = str_replace(' ', '', $employee_details['first_name'].$employee_details['last_name']);
+        $password = str_replace(' ', '', $employee_details['first_name'].date('dmY', strtotime($employee_details['birth_date'])));
+        $userName = $this->createUserName($userName);
+
+        $newUser = $this->userObject->create(
+            [
+                'username' => $userName,
+                'email' => $employee_details['email'],
+                'password' => bcrypt($password),
+            ]
+        );
+
+        $userId = $newUser->id;
+        $this->basic->create(
+            [
+                'user_id' => $userId,
+                'first_name' => $employee_details['first_name'],
+                'last_name' => $employee_details['first_name'],
+                'email' => $employee_details['email'],
+                'mobile' => $employee_details['mobile'],
+                'rsz_number' => $employee_details['rsz_number'],
+                'birth_date' => $employee_details['birth_date'],
+                'birth_place' => $employee_details['birth_place'],
+                'bank_account' => $employee_details['bank_number'],
+                'gender_id' => $employee_details['gender_id'],
+                'nationality_id' => $employee_details['nationality_id'],
+                'language_id' => $employee_details['language_id'],
+                'created_by' => $employee_details['current_user_id'],
+            ]
+        );
+        $this->personal->create([
+            'user_id' => $userId,
+            'marital_status_id' => $employee_details['marital_status'],
+            'dependent_spouse_id' => $employee_details['dependent_spouse'],
+            'dependent_children' => $employee_details['childrens_count'],
+        ]);
+    }
+
+    public function generateULID()
+    {
+        return Str::ulid()->toBase58();
+    }
+
+    public function inviteEmployee($invitation)
     {
 
+        $this->invite->updateOrInsert(['mail' => $invitation['mail']], [
+            'mail' => $invitation['mail'],
+            'token' => $this->generateULID(),
+            'expire_at' => date('Y-m-d H:i:00', strtotime('+1 day')),
+            'invite_role' => $invitation['invite_role'],
+            'invite_by' => $invitation['invite_by'],
+            'company_id' => $invitation['company_id'],
+        ]);
+
+        //we have trigger mail funciton from here.
     }
 }

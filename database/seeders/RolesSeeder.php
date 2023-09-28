@@ -4,7 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Roles;
+// use App\Models\Roles;
+use Spatie\Permission\Models\Role;
 
 class RolesSeeder extends Seeder
 {
@@ -14,16 +15,16 @@ class RolesSeeder extends Seeder
     public function run(): void
     {
         $values = [
-            ['title' => 'INDII admin', 'key' => 'indii_admin'],
-            ['title' => 'HR', 'key' => 'hr'],
-            ['title' => 'Sales', 'key' => 'sales'],
-            ['title' => 'Customer', 'key' => 'customer'],
-            ['title' => 'Manager', 'key' => 'manager'],
-            ['title' => 'Planner', 'key' => 'planner'],
-            ['title' => 'Employee', 'key' => 'employee'],
+            ['name' => 'INDII admin', 'guard_name' => 'api'],
+            ['name' => 'HR', 'guard_name' => 'api'],
+            ['name' => 'Sales', 'guard_name' => 'api'],
+            ['name' => 'Customer', 'guard_name' => 'api'],
+            ['name' => 'Manager', 'guard_name' => 'api'],
+            ['name' => 'Planner', 'guard_name' => 'api'],
+            ['name' => 'Employee', 'guard_name' => 'api'],
         ];
         foreach ($values as $value) {
-            Roles::create($value);
+            Role::create($value);
         }
     }
 }

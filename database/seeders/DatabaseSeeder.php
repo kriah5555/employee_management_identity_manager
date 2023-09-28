@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\{CountriesSeeder, GenderSeeder, LanguagesSeeder, MaritalStatusSeeder, RolesSeeder, SuperdminSeeder};
+use Database\Seeders\{CountriesSeeder, GenderSeeder, LanguagesSeeder, MaritalStatusSeeder, RolesSeeder, SuperdminSeeder,
+    FileTypesSeeder
+};
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +21,7 @@ class DatabaseSeeder extends Seeder
             LanguagesSeeder::class,
             MaritalStatusSeeder::class,
             RolesSeeder::class,
+            FileTypesSeeder::class,
             SuperdminSeeder::class
         ]);
     }
