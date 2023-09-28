@@ -50,14 +50,6 @@ Route::middleware('validate.api.token')->group(function () {
     });
 });
 
-Route::controller(GenderController::class)->group(function () {
-    Route::post('gender/all', 'index');
-    Route::post('gender/store', 'store');
-    Route::post('gender/{gender}', 'show');
-    Route::post('gender/edit/{gender}', 'edit');
-    Route::post('gender/delete/{gender}', 'destroy');
-});
-
 Route::controller(LanguagesController::class)->group(function () {
     Route::post('language/all', 'index');
     Route::post('language/store', 'store');
@@ -114,3 +106,12 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 // Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
 // Route::post('employee/create', [UserController::class, 'createEmployee']);
 // Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
+
+
+Route::group(['middleware' => 'setactiveuser'], function () {
+
+    Route::resource('genders', GenderController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
+
+    Route::resource('marital-statuses', MaritalStatusController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
+
+});

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Employee;
 
 use App\Models\BaseModel;
 use App\Traits\UserAudit;

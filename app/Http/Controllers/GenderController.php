@@ -2,74 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Services\GenderService;
+use Illuminate\Http\JsonResponse;
+use App\Http\Rules\GenderRequest;
 use App\Models\Gender;
-use Illuminate\Http\Request;
+
 
 class GenderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $genderService;
+
+    public function __construct(GenderService $genderService)
+    {
+        $this->genderService = $genderService;
+    }
+
     public function index()
     {
-        $data = Gender::all();
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ]);
+        return returnResponse(
+            [
+                'success' => true,
+                'data'    => $this->genderService->index(),
+            ],
+            JsonResponse::HTTP_OK,
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id)
     {
-        $gender = new Gender();
-        $gender->name = $request->name;
-        $gender->status = 1;
-        $id = $gender->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Gender create successfully.',
-            'data' => $id,
-        ]);
+        return returnResponse(
+            [
+                'success' => true,
+                'data'    => $this->genderService->show($id),
+            ],
+            JsonResponse::HTTP_OK,
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Gender $gender)
+    public function edit($id)
     {
-        return response()->json([
-            'success' => true,
-            'message' => 'Gender sent successfully.',
-            'data' => $gender,
-        ]);
+        return returnResponse(
+            [
+                'success' => true,
+                'data'    => $this->genderService->edit($id),
+            ],
+            JsonResponse::HTTP_OK,
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Request $request, Gender $gender)
+    public function store(GenderRequest $request)
     {
-        $data = $request->all();
-        $gender->update($data);
-        return response()->json([
-            'success' => true,
-            'message' => 'Gender updated successfully',
-            'data' => $gender,
-        ]);
+        return returnResponse(
+            [
+                'success' => true,
+                'message' => 'Gender created successfully',
+                'data'    => $this->genderService->store($request->validated())
+            ],
+            JsonResponse::HTTP_OK,
+        );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function update(GenderRequest $request, Gender $gender)
+    {
+        if ($this->genderService->update($gender, $request->validated())) {
+            return returnResponse(
+                [
+                    'success' => true,
+                    'message' => 'Gender updated successfully',
+                ],
+                JsonResponse::HTTP_OK,
+            );
+        } else {
+            return returnResponse(
+                [
+                    'success' => false,
+                    'message' => 'Failed to update',
+                ],
+                JsonResponse::HTTP_OK,
+            );
+        }
+    }
+
     public function destroy(Gender $gender)
     {
-        $gender->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Gender deleted successfully.',
-        ]);
+        if ($this->genderService->delete($gender)) {
+            return returnResponse(
+                [
+                    'success' => true,
+                    'message' => 'Gender deleted',
+                ],
+                JsonResponse::HTTP_OK,
+            );
+        } else {
+            return returnResponse(
+                [
+                    'success' => false,
+                    'message' => 'Failed to delete',
+                ],
+                JsonResponse::HTTP_OK,
+            );
+        }
     }
 }
