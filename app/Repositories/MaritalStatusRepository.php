@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\MaritalStatusRepositoryInterface;
-use App\Models\Employee\MaritalStatus;
+use App\Models\MaritalStatus;
 
 class MaritalStatusRepository implements MaritalStatusRepositoryInterface
 {

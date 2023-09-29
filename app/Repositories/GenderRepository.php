@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\GenderRepositoryInterface;
-use App\Models\Employee\Gender;
+use App\Models\Gender;
 
 class GenderRepository implements GenderRepositoryInterface
 {
