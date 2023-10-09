@@ -6,9 +6,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\{
     CountriesSeeder,
-    GenderSeeder,
     LanguagesSeeder,
-    MaritalStatusSeeder,
     RolesSeeder,
     SuperdminSeeder,
     FileTypesSeeder
@@ -22,12 +20,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            CountriesSeeder::class,
-            GenderSeeder::class,
-            LanguagesSeeder::class,
-            MaritalStatusSeeder::class,
+                // CountriesSeeder::class,
+                // LanguagesSeeder::class,
             RolesSeeder::class,
-            FileTypesSeeder::class,
+                // FileTypesSeeder::class,
             SuperdminSeeder::class
         ]);
     }

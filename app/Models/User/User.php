@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Traits\HasPermissions;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, LogsActivity, HasRoles, HasPermissions;
+    use HasFactory, Notifiable, HasRoles, HasPermissions;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -23,10 +21,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username',
+        'social_security_number',
         'password',
         'status',
-        'created_by',
-        'updated_by'
     ];
 
     /**
@@ -46,14 +43,6 @@ class User extends Authenticatable
         });
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['username', 'password', 'status'])
-            ->logOnlyDirty(['username', 'password', 'status'])
-            ->dontSubmitEmptyLogs();
-    }
-
     public function isActive(): bool
     {
         return $this->status;
@@ -63,24 +52,4 @@ class User extends Authenticatable
     {
         return $this->where('username', $username)->first();
     }
-
-    public function isSuperadmin(): bool
-    {
-        return $this->is_superadmin;
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->is_staff;
-    }
-
-    public function checkUserNameExist($username)
-    {
-        return $this->where('username', $username)->first();
-    }
-
-    // public function validateForPassportPasswordGrant($password)
-    // {
-    //     return Hash::check($password, $this->password);
-    // }
 }

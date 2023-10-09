@@ -10,20 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        if (!Schema::hasTable('users')) {
-            Schema::create('users', function (Blueprint $table) {
-                $table->id();
-                $table->string('username')->unique();
-                $table->string('password');
-                $table->string('email')->nullable();
-                $table->boolean('status')->default(true);
-                $table->integer('created_by')->nullable(true);
-                $table->integer('updated_by')->nullable(true);
-                $table->rememberToken();
-                $table->timestamps();
-                $table->softDeletes();
-            });
-        }
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('username')->unique();
+            $table->string('social_security_number')->nullable();
+            $table->string('password');
+            $table->boolean('status')->default(true);
+            $table->integer('created_by')->nullable(true);
+            $table->integer('updated_by')->nullable(true);
+            $table->rememberToken();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**

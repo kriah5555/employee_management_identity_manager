@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('genders', function (Blueprint $table) {
+        Schema::create('meal_vouchers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->smallInteger('sort_order');
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('genders');
+        Schema::dropIfExists('meal_vouchers');
     }
 };

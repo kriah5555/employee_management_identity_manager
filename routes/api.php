@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\{GenderController, LanguagesController, MaritalStatusController};
 
 /*
@@ -39,6 +39,8 @@ Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 Route::post('/create-user', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('/generate-access-token', [AuthController::class, 'generateAccessToken']);
 
 Route::middleware('validate.api.token')->group(function () {
 
