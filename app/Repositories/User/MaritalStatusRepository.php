@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\User;
 
-use App\Interfaces\MaritalStatusRepositoryInterface;
-use App\Models\MaritalStatus;
+use App\Interfaces\User\MaritalStatusRepositoryInterface;
+use App\Models\User\MaritalStatus;
 
 class MaritalStatusRepository implements MaritalStatusRepositoryInterface
 {
@@ -30,5 +30,10 @@ class MaritalStatusRepository implements MaritalStatusRepositoryInterface
     public function updateMaritalStatus(string $maritalStatusId, array $newDetails)
     {
         return MaritalStatus::whereId($maritalStatusId)->update($newDetails);
+    }
+
+    public function getActiveMaritalStatuses()
+    {
+        return MaritalStatus::where('status', '=', true)->get();
     }
 }

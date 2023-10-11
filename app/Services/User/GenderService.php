@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\User;
 
-use Illuminate\Support\Facades\DB;
-use Exception;
-use App\Repositories\GenderRepository;
-use App\Models\Gender;
+use App\Repositories\User\GenderRepository;
+use App\Models\User\Gender;
 
 class GenderService
 {
@@ -48,5 +46,10 @@ class GenderService
     public function delete(Gender $gender)
     {
         return $this->genderRepository->deleteGender($gender->id);
+    }
+
+    public function getActiveGenders()
+    {
+        return $this->genderRepository->getActiveGenders();
     }
 }

@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\User;
 
-use Illuminate\Support\Facades\DB;
-use Exception;
-use App\Repositories\MaritalStatusRepository;
-use App\Models\MaritalStatus;
+use App\Repositories\User\MaritalStatusRepository;
+use App\Models\User\MaritalStatus;
 
 class MaritalStatusService
 {
@@ -48,5 +46,9 @@ class MaritalStatusService
     public function delete(MaritalStatus $maritalStatus)
     {
         return $this->maritalStatusRepository->deleteMaritalStatus($maritalStatus->id);
+    }
+    public function getActiveMaritalStatuses()
+    {
+        return $this->maritalStatusRepository->getActiveMaritalStatuses();
     }
 }

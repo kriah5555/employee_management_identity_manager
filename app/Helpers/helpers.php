@@ -93,3 +93,38 @@ if (!function_exists('returnIntenalServerErrorResponse')) {
         );
     }
 }
+
+if (!function_exists('collectionToValueLabelFormat')) {
+    function collectionToValueLabelFormat($collection, $valueKey = 'id', $labelKey = 'name')
+    {
+        return generateValueLabelArray($collection->toArray(), $valueKey, $labelKey);
+    }
+}
+
+
+if (!function_exists('generateValueLabelArray')) {
+    function generateValueLabelArray($array, $valueKey = 'id', $labelKey = 'name')
+    {
+        return array_map(function ($item) use ($valueKey, $labelKey) {
+            return [
+                'value' => $item[$valueKey],
+                'label' => $item[$labelKey],
+            ];
+        }, $array);
+    }
+}
+
+if (!function_exists('associativeToDictionaryFormat')) {
+    function associativeToDictionaryFormat($associativeArray, $valueKey = 'id', $labelKey = 'name')
+    {
+        $dict = [];
+        foreach ($associativeArray as $key => $value) {
+            // Your custom function logic here, which can use both $key and $value.
+            $dict[] = [
+                $valueKey => $key,
+                $labelKey => $value,
+            ];
+        }
+        return $dict;
+    }
+}

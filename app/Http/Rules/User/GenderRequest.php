@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Rules;
+namespace App\Http\Rules\User;
 
 use App\Http\Rules\ApiRequest;
 
-class MaritalStatusRequest extends ApiRequest
+class GenderRequest extends ApiRequest
 {
 
     /**
@@ -21,12 +21,11 @@ class MaritalStatusRequest extends ApiRequest
             ];
             if ($this->isMethod('post')) {
                 $rules = array_merge($rules, [
-                    'name' => 'required|string|unique:marital_statuses,name|max:255',
+                    'name' => 'required|string|max:255',
                 ]);
             } else {
-                $maritalStatus = $this->route('marital_status');
                 $rules = array_merge($rules, [
-                    'name' => 'required|string|max:255|unique:marital_statuses,name,' . $maritalStatus->id,
+                    'name' => 'required|string|max:255',
                 ]);
             }
         }
