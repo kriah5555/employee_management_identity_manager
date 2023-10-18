@@ -115,7 +115,7 @@ if (!function_exists('generateValueLabelArray')) {
 }
 
 if (!function_exists('associativeToDictionaryFormat')) {
-    function associativeToDictionaryFormat($associativeArray, $valueKey = 'id', $labelKey = 'name')
+    function associativeToDictionaryFormat($associativeArray, $valueKey = 'id', $labelKey = 'value')
     {
         $dict = [];
         foreach ($associativeArray as $key => $value) {
@@ -126,5 +126,12 @@ if (!function_exists('associativeToDictionaryFormat')) {
             ];
         }
         return $dict;
+    }
+}
+
+if (!function_exists('formatModelName')) {
+    function formatModelName($modelName)
+    {
+        return ucfirst(strtolower(preg_replace('/(?<!^)([A-Z])/', ' $1', $modelName)));
     }
 }

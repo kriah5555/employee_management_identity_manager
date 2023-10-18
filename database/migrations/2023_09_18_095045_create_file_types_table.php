@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('file_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('status')->default(1);
+            $table->integer('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

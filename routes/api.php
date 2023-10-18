@@ -81,8 +81,6 @@ Route::group([
 ], function () {
     Route::post('create', 'createUser');
     Route::post('all', 'manageUsers');
-    // Route::post('edit/{marital_status}', 'edit');
-    // Route::post('delete/{marital_status}', 'destroy');
 });
 
 Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
