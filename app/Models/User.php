@@ -84,4 +84,9 @@ class User extends Authenticatable
     // {
     //     return Hash::check($password, $this->password);
     // }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_users', 'user_id', 'conversation_id');
+    }
 }

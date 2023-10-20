@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
+
 use App\Http\Controllers\{GenderController, LanguagesController, MaritalStatusController};
 
 /*
@@ -27,6 +29,7 @@ Route::get('/testing', function () {
         'message' => 'Test API.'
     ]);
 });
+
 
 Route::post('/roles/create', [RolesController::class, 'storeRole']);
 
@@ -118,3 +121,15 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 // Route::get('/employee/options', [UserController::class, 'getEmployeeCreationOptions']);
 // Route::post('employee/create', [UserController::class, 'createEmployee']);
 // Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
+
+
+// Check if a conversation exists between two users or create a new one
+
+Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::get('/get-conversation/{conversationId}', [ChatController::class, 'getMessagesInConversationFormat']);
+Route::get('/get-messages/{conversationId}', [ChatController::class, 'getMessages']);
+Route::delete('/conversation/{id}', [ChatController::class, 'deleteConversation']);
+Route::delete('/message/{id}', [ChatController::class, 'deleteMessage']);
+
+
