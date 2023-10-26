@@ -132,12 +132,14 @@ class ChatService
         $conversation = Conversation::find($conversationId);
 
         if (!$conversation) {
-            return "Conversation is not available";
+            $response = "Conversation is not available";
+            return $response;
         }
 
         $conversation->deleteConversation();
 
-        return "$conversationId deleted";
+        $response = "$conversationId deleted";
+        return $response ;
     }
 
 

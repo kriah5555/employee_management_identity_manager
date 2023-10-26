@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use App\Services\ChatService;
 
@@ -41,14 +42,17 @@ class ChatController extends Controller
 
     public function deleteConversation($conversationId)
     {
-        $this->chatService->deleteConversation($conversationId);
-        return response()->json(['message' => 'Conversation deleted']);
+       $response =  $this->chatService->deleteConversation($conversationId);
+        return response()->json(['conversation' => $response]);
+
     }
+
 
     public function deleteMessage($messageId)
     {
-        $this->chatService->deleteMessage($messageId);
-        return response()->json(['message' => 'message deleted']);
+        $response = $this->chatService->deleteMessage($messageId);
+        return response()->json(['message ' => $response]);
+
     }
 
 
