@@ -4,7 +4,7 @@ namespace App\Interfaces\User;
 
 interface MaritalStatusRepositoryInterface
 {
-    public function getAllMaritalStatuses();
+    public function getMaritalStatuses();
 
     public function getMaritalStatusById(string $maritalStatusId);
 

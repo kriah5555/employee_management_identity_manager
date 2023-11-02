@@ -56,10 +56,6 @@ Route::middleware('validate.api.token')->group(function () {
     });
 });
 
-Route::resource('genders', GenderController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
-
-Route::resource('marital-statuses', MaritalStatusController::class)->only(['index', 'store', 'show', 'edit', 'update', 'destroy']);
-
 Route::controller(LanguagesController::class)->group(function () {
     Route::post('language/all', 'index');
     Route::post('language/store', 'store');
@@ -93,3 +89,19 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 
 
 Route::get('user/get-options-for-user-basic-details', [UserController::class, 'getOptionsForUserBasicDetails']);
+
+$resources = [
+    'genders'          => [
+        'controller' => GenderController::class,
+        'methods'    => ['index', 'show', 'create', 'store', 'update', 'destroy']
+    ],
+    'marital-statuses' => [
+        'controller' => MaritalStatusController::class,
+        'methods'    => ['index', 'show', 'create', 'store', 'update', 'destroy']
+    ],
+];
+foreach ($resources as $uri => ['controller' => $controller, 'methods' => $methods]) {
+    Route::resource($uri, $controller)->only($methods);
+}
+Route::get('employee/get-dependent-spouse-options', [UserController::class, 'getDependentSpouseOptions']);
+Route::get('employee/get-language-options', [UserController::class, 'getLanguageOptions']);

@@ -145,5 +145,24 @@ class UserController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    public function getDependentSpouseOptions()
+    {
+        return returnResponse(
+            [
+                'success' => true,
+                'data'    => $this->userService->getDependentSpouseOptions(),
+            ],
+            JsonResponse::HTTP_OK,
+        );
+    }
+    public function getLanguageOptions()
+    {
+        return returnResponse(
+            [
+                'success' => true,
+                'data'    => $this->userService->getLanguageOptions(),
+            ],
+            JsonResponse::HTTP_OK,
+        );
+    }
 }

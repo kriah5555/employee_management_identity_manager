@@ -7,7 +7,7 @@ use App\Models\User\MaritalStatus;
 
 class MaritalStatusRepository implements MaritalStatusRepositoryInterface
 {
-    public function getAllMaritalStatuses()
+    public function getMaritalStatuses()
     {
         return MaritalStatus::all();
     }

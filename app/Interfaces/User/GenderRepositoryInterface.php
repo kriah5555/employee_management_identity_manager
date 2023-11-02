@@ -4,7 +4,7 @@ namespace App\Interfaces\User;
 
 interface GenderRepositoryInterface
 {
-    public function getAllGenders();
+    public function getGenders();
 
     public function getGenderById(string $genderId);
 

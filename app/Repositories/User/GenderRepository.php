@@ -7,7 +7,7 @@ use App\Models\User\Gender;
 
 class GenderRepository implements GenderRepositoryInterface
 {
-    public function getAllGenders()
+    public function getGenders()
     {
         return Gender::all();
     }

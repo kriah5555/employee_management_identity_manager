@@ -18,7 +18,7 @@ class MaritalStatusService
      */
     public function index()
     {
-        return $this->maritalStatusRepository->getAllMaritalStatuses();
+        return $this->maritalStatusRepository->getMaritalStatuses();
     }
 
     public function show(string $maritalStatusId)

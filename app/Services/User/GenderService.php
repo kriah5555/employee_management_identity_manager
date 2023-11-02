@@ -18,7 +18,7 @@ class GenderService
      */
     public function index()
     {
-        return $this->genderRepository->getAllGenders();
+        return $this->genderRepository->getGenders();
     }
 
     public function show(string $genderId)

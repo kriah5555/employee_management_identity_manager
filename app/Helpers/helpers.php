@@ -135,3 +135,16 @@ if (!function_exists('formatModelName')) {
         return ucfirst(strtolower(preg_replace('/(?<!^)([A-Z])/', ' $1', $modelName)));
     }
 }
+
+if (!function_exists('getValueLabelOptionsFromConfig')) {
+    function getValueLabelOptionsFromConfig($key)
+    {
+        $values = config($key);
+        return array_map(function ($value, $label) {
+            return [
+                'value' => $value,
+                'label' => $label,
+            ];
+        }, array_keys($values), $values);
+    }
+}
