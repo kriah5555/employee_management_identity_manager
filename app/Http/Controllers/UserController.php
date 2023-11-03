@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
+use App\Http\Rules\ForgotPassword;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Rules\{CreateEditEmployee, CreateUserRequest, InviteEmployee};
 
 
@@ -16,7 +17,7 @@ class UserController extends Controller
      * creating objects
      */
     protected $user_service;
-    
+
     /**
      * class constructor
      */
@@ -25,7 +26,7 @@ class UserController extends Controller
     {
         $this->user_service = new UserService();
     }
-     
+
     public function createUser(CreateUserRequest $request): JsonResponse
     {
         try {
@@ -82,7 +83,6 @@ class UserController extends Controller
 
     public function updateEmployee()
     {
-
     }
 
     public function createEmployee(CreateEditEmployee $employee_details)
@@ -118,6 +118,24 @@ class UserController extends Controller
                 'message' => $e->getMessage(),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function forgotPassword(ForgotPassword $request)
+    {
+        $messages = $this->user_service->forgotPassword($request->validated());
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function codeCheck(ForgotPassword $request)
+    {
+        $messages = $this->user_service->codeCheck($request->validated());
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function resetPassword(ForgotPassword $request)
+    {
+        $messages = $this->user_service->resetPassword($request->validated());
+        return response()->json(['messages' => $messages]);
     }
 
 }

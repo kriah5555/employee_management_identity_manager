@@ -11,6 +11,10 @@ use App\Models\{
 };
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendCodeResetPassword;
+use App\Models\ResetCodePassword;
 
 use function PHPSTORM_META\type;
 
@@ -64,17 +68,17 @@ class UserService
         $data = self::formatCountryAndNationality($countries);
 
         $data['gender'] = Gender::getGenders();
-        
+
         $data['languages'] = Languages::getLanguages();
         $data['marital_status'] = MaritalStatus::getMaritalStatus();
 
         $data['dependent_spouse'] = ['yes' => 'Yes', 'no' => 'No'];
         return $data;
     }
-    
+
     public function createUserName($userName, $flag = null)
     {
-        
+
         if ($this->userObject->checkUserNameExist($userName.$flag) == null)
         {
             return $userName.$flag;
@@ -142,4 +146,62 @@ class UserService
 
         //we have trigger mail funciton from here.
     }
+
+    public function forgotPassword($request)
+    {
+        try {
+            $email = $request['email']; // Get the email from the request
+
+            // Delete all old codes that the user sent before.
+            ResetCodePassword::where('email', $email)->delete();
+
+            // Generate a random code
+            $code = mt_rand(100000, 999999);
+
+            // Create a new code with the current timestamp
+            ResetCodePassword::create([
+                'email' => $email,
+                'code' => $code,
+                'created_at' => now(), // Manually set the created_at attribute
+            ]);
+
+            // Send an email to the user
+            Mail::to($email)->send(new SendCodeResetPassword($code));
+
+            return response(['message' => "OTP sent to email Id"], 200);
+        } catch (\Exception $e) {
+            return response(['message' => 'Email not found.'], 422);
+        }
+    }
+
+
+
+        public function resetPassword( $request)
+        {
+
+                $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
+
+                // Check if it has expired: the time is one hour
+                if ($passwordReset->created_at > now()->addMinutes(15)) {
+                    $passwordReset->delete();
+                    return response(['message' => trans('passwords.code_is_expire')], 422);
+                }
+
+
+                // If the code is valid and not expired, update the user's password
+                $user = User::where('email', $passwordReset->email)->first();
+                $newPassword = $request['new_password'];
+                $user->password = Hash::make($newPassword);
+                $user->save();
+
+                // Delete the used reset code
+                $passwordReset->delete();
+
+                return response([
+                    'code' => $passwordReset->code,
+                    'message' => trans('passwords.code_is_valid'),
+                    'updated_password' => $newPassword, // Include the updated password in the response
+                ], 200);
+
+        }
 }
