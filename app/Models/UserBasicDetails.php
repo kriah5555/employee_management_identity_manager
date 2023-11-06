@@ -30,7 +30,7 @@ class UserBasicDetails extends Model
      * @var array
      */
 
-     protected $fillable = [
+    protected $fillable = [
         'user_id',
         'first_name',
         'last_name',
@@ -42,7 +42,7 @@ class UserBasicDetails extends Model
         'bank_account',
         'gender_id',
         'nationality_id',
-        'language_id',
+        'language',
         'status',
         'created_by',
         'updated_by',

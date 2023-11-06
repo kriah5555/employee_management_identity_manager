@@ -88,8 +88,6 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 // Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 
 
-Route::get('user/get-options-for-user-basic-details', [UserController::class, 'getOptionsForUserBasicDetails']);
-
 $resources = [
     'genders'          => [
         'controller' => GenderController::class,
@@ -105,3 +103,16 @@ foreach ($resources as $uri => ['controller' => $controller, 'methods' => $metho
 }
 Route::get('employee/get-dependent-spouse-options', [UserController::class, 'getDependentSpouseOptions']);
 Route::get('employee/get-language-options', [UserController::class, 'getLanguageOptions']);
+
+
+Route::group(['middleware' => 'setactiveuser'], function () {
+    $resources = [
+        'user' => [
+            'controller' => UserController::class,
+            'methods'    => ['create']
+        ],
+    ];
+    foreach ($resources as $uri => ['controller' => $controller, 'methods' => $methods]) {
+        Route::resource($uri, $controller)->only($methods);
+    }
+});

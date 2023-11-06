@@ -1,12 +1,33 @@
 <?php
 
 return [
-
     'LANGUAGE_OPTIONS'         => [
-        'en' => 'English',
-        'nl' => 'Dutch',
-        'fr' => 'French'
+        [
+            'key'   => 'en',
+            'value' => 'English',
+        ],
+        [
+            'key'   => 'nl',
+            'value' => 'Dutch',
+        ],
+        [
+            'key'   => 'fr',
+            'value' => 'French',
+        ],
     ],
 
-    'DEPENDENT_SPOUSE_OPTIONS' => ['no' => 'No', 'with_income' => 'With income', 'without_income' => 'Without income'],
+    'DEPENDENT_SPOUSE_OPTIONS' => [
+        [
+            'key'   => 'no',
+            'value' => 'No',
+        ],
+        [
+            'key'   => 'with_income',
+            'value' => 'With income',
+        ],
+        [
+            'key'   => 'without_income',
+            'value' => 'Without income',
+        ],
+    ]
 ];

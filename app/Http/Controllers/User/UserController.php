@@ -123,26 +123,33 @@ class UserController extends Controller
         }
     }
 
-    public function getOptionsForUserBasicDetails()
+    public function create()
     {
         try {
             return returnResponse(
                 [
                     'success' => true,
                     'data'    => [
-                        'genders'                  => collectionToValueLabelFormat($this->genderService->getActiveGenders()),
-                        'marital_statuses'         => collectionToValueLabelFormat($this->maritalStatusService->getActiveMaritalStatuses()),
-                        'dependent_spouse_options' => associativeToDictionaryFormat($this->userService->getDependentSpouseOptions(), 'value', 'label'),
-                        'languages'                => associativeToDictionaryFormat($this->userService->getLanguageOptions(), 'value', 'label'),
+                        'genders'                  => $this->genderService->getActiveGenders(),
+                        'marital_statuses'         => $this->maritalStatusService->getActiveMaritalStatuses(),
+                        // 'dependent_spouse_options' => associativeToDictionaryFormat($this->userService->getDependentSpouseOptions(), 'value', 'label'),
+                        'dependent_spouse_options' => $this->userService->getDependentSpouseOptions(),
+                        'languages'                => $this->userService->getLanguageOptions(),
                     ]
                 ],
                 JsonResponse::HTTP_OK,
             );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            return returnResponse(
+                [
+                    'success' => false,
+                    'data'    => [
+                        'success' => false,
+                        'message' => $e->getMessage(),
+                    ]
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+            );
         }
     }
     public function getDependentSpouseOptions()
