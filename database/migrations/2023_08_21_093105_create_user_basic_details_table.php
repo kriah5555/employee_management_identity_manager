@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('nationality');
             $table->foreignId('gender_id')->nullable()->references('id')->on('genders')->onDelete('cascade');
             $table->date('date_of_birth');
             $table->string('place_of_birth')->nullable();

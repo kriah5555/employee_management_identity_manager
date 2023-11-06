@@ -132,9 +132,8 @@ class UserController extends Controller
                     'data'    => [
                         'genders'                  => $this->genderService->getActiveGenders(),
                         'marital_statuses'         => $this->maritalStatusService->getActiveMaritalStatuses(),
-                        // 'dependent_spouse_options' => associativeToDictionaryFormat($this->userService->getDependentSpouseOptions(), 'value', 'label'),
-                        'dependent_spouse_options' => $this->userService->getDependentSpouseOptions(),
-                        'languages'                => $this->userService->getLanguageOptions(),
+                        'dependent_spouse_options' => associativeToDictionaryFormat($this->userService->getDependentSpouseOptions(), 'key', 'value'),
+                        'languages'                => associativeToDictionaryFormat($this->userService->getLanguageOptions(), 'key', 'value'),
                     ]
                 ],
                 JsonResponse::HTTP_OK,
