@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\User;
 
-// use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Rules\{CreateEditEmployee, CreateUserRequest};
 use App\Models\{
@@ -46,7 +45,8 @@ class UserService
         $this->userObject = new User();
         $this->basic = new UserBasicDetails();
         $this->personal = new UserPersonalDetails();
-        $this->invite =  new InviteUserTokens();
+        $this->invite = new InviteUserTokens();
+
     }
 
     public static function formatCountryAndNationality($raw)
@@ -54,13 +54,13 @@ class UserService
         $data = [];
         foreach ($raw as $value) {
             $data['country'][] = [
-                'id' => $value['id'],
+                'id'    => $value['id'],
                 'value' => $value['name'],
-                'code' => $value['iso_code_2']
+                'code'  => $value['iso_code_2']
             ];
             $data['nationality'][] = [
-                'id' => $value['nationality']['id'],
-                'value' => $value['nationality']['nationality'],
+                'id'         => $value['nationality']['id'],
+                'value'      => $value['nationality']['nationality'],
                 'country_id' => $value['nationality']['country_id']
             ];
         }
@@ -102,7 +102,7 @@ class UserService
         $newUser = $this->userObject->create(
             [
                 'username' => $userName,
-                'email' => $employee_details['email'],
+                'email'    => $employee_details['email'],
                 'password' => bcrypt($password),
             ]
         );
@@ -110,26 +110,26 @@ class UserService
         $userId = $newUser->id;
         $this->basic->create(
             [
-                'user_id' => $userId,
-                'first_name' => $employee_details['first_name'],
-                'last_name' => $employee_details['first_name'],
-                'email' => $employee_details['email'],
-                'mobile' => $employee_details['mobile'],
-                'rsz_number' => $employee_details['rsz_number'],
-                'birth_date' => $employee_details['birth_date'],
-                'birth_place' => $employee_details['birth_place'],
-                'bank_account' => $employee_details['bank_number'],
-                'gender_id' => $employee_details['gender_id'],
+                'user_id'        => $userId,
+                'first_name'     => $employee_details['first_name'],
+                'last_name'      => $employee_details['first_name'],
+                'email'          => $employee_details['email'],
+                'mobile'         => $employee_details['mobile'],
+                'rsz_number'     => $employee_details['rsz_number'],
+                'birth_date'     => $employee_details['birth_date'],
+                'birth_place'    => $employee_details['birth_place'],
+                'bank_account'   => $employee_details['bank_number'],
+                'gender_id'      => $employee_details['gender_id'],
                 'nationality_id' => $employee_details['nationality_id'],
-                'language_id' => $employee_details['language_id'],
-                'created_by' => $employee_details['current_user_id'],
+                'language_id'    => $employee_details['language_id'],
+                'created_by'     => $employee_details['current_user_id'],
             ]
         );
         $this->personal->create([
-            'user_id' => $userId,
-            'marital_status_id' => $employee_details['marital_status'],
+            'user_id'             => $userId,
+            'marital_status_id'   => $employee_details['marital_status'],
             'dependent_spouse_id' => $employee_details['dependent_spouse'],
-            'dependent_children' => $employee_details['childrens_count'],
+            'dependent_children'  => $employee_details['childrens_count'],
         ]);
     }
 
@@ -142,12 +142,12 @@ class UserService
     {
 
         $this->invite->updateOrInsert(['mail' => $invitation['mail']], [
-            'mail' => $invitation['mail'],
-            'token' => $this->generateULID(),
-            'expire_at' => date('Y-m-d H:i:00', strtotime('+1 day')),
+            'mail'        => $invitation['mail'],
+            'token'       => $this->generateULID(),
+            'expire_at'   => date('Y-m-d H:i:00', strtotime('+1 day')),
             'invite_role' => $invitation['invite_role'],
-            'invite_by' => $invitation['invite_by'],
-            'company_id' => $invitation['company_id'],
+            'invite_by'   => $invitation['invite_by'],
+            'company_id'  => $invitation['company_id'],
         ]);
 
         //we have trigger mail funciton from here.
@@ -246,5 +246,15 @@ class UserService
         } catch (\Exception $e) {
             return response(['error' => 'An error occurred while resetting the password.'], 500);
         }
+    }
+
+    public function getDependentSpouseOptions()
+    {
+        return getValueLabelOptionsFromConfig('constants.DEPENDENT_SPOUSE_OPTIONS');
+    }
+
+    public function getLanguageOptions()
+    {
+        return getValueLabelOptionsFromConfig('constants.LANGUAGE_OPTIONS');
     }
 }

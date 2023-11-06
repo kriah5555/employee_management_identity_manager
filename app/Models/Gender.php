@@ -30,7 +30,7 @@ class Gender extends Model
      * @var array
      */
 
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'status',
         'created_by',

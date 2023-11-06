@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,12 +13,12 @@ return new class extends Migration
         Schema::create('genders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('status')->default(1);
-            $table->softDeletes();
+            $table->smallInteger('sort_order');
+            $table->boolean('status')->default(true);
+            $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
-            $table->integer('created_by')->default(0);
-            $table->integer('updated_by')->default(0);
-            $table->integer('deleted_by')->default(0)->nullable();
+            $table->softDeletes();
         });
     }
 

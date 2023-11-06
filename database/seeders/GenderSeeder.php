@@ -14,11 +14,11 @@ class GenderSeeder extends Seeder
     public function run(): void
     {
         $values = [
-            ['name' => 'Male'],
-            ['name' => 'Female'],
-            ['name' => 'Others'],
+            ['name' => 'Male', 'sort_order' => 1],
+            ['name' => 'Female', 'sort_order' => 2],
+            ['name' => 'Others', 'sort_order' => 3],
         ];
-        foreach($values as $value) {
+        foreach ($values as $value) {
             Gender::insert($value);
         }
     }

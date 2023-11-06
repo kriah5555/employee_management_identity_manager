@@ -14,11 +14,11 @@ class MaritalStatusSeeder extends Seeder
     public function run(): void
     {
         $values = [
-            ['name' => 'Single'],
-            ['name' => 'Married'],
-            ['name' => 'Divorced'],
-            ['name' => 'Widowed'],
-            ['name' => 'Separated'],
+            ['name' => 'Single', 'sort_order' => 1],
+            ['name' => 'Married', 'sort_order' => 2],
+            ['name' => 'Divorced', 'sort_order' => 3],
+            ['name' => 'Widowed', 'sort_order' => 4],
+            ['name' => 'Separated', 'sort_order' => 5],
         ];
 
         foreach ($values as $value) {
@@ -26,4 +26,3 @@ class MaritalStatusSeeder extends Seeder
         }
     }
 }
- 

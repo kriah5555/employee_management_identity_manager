@@ -18,22 +18,22 @@ class PermissionsController extends Controller
     public function createPermission(Request $request, $editid = null)
     {
         $categoriesList = $this->serviceClass->getCategories();
-        if ($editid != null){
+        if ($editid != null) {
             $permissionDetails = $this->serviceClass->getPermissionDetails($editid);
-            return view('permissions.permissions', compact('categoriesList','permissionDetails', 'editid'));
+            return view('permissions.permissions', compact('categoriesList', 'permissionDetails', 'editid'));
         }
-        return view('permissions.permissions',compact('categoriesList'));
+        return view('permissions.permissions', compact('categoriesList'));
     }
 
     public function storePermission(Request $request)
     {
         $request->validate([
-            'title' => 'required|unique:permissions|max:50',
+            'title'    => 'required|unique:permissions|max:50',
             'category' => 'required',
         ]);
 
         $result = $this->serviceClass->savePermission($request);
-        if($result === true) {
+        if ($result === true) {
             return redirect("/permissions/manage")->withSuccess('Permission created successfully');
         } else {
             return redirect()->back()->withError('Something went wrong while creating permission');
@@ -44,15 +44,15 @@ class PermissionsController extends Controller
     public function updatePermission(Request $request, $editid = null)
     {
         $request->validate([
-            'title' => 'required|max:50|unique:permissions,title,'.$editid.',permission_id',
+            'title'    => 'required|max:50|unique:permissions,title,' . $editid . ',permission_id',
             'category' => 'required',
         ]);
         $result = $this->serviceClass->editPermissions($request, $editid);
-        if($result === true) {
+        if ($result === true) {
             return redirect("/permissions/manage")->withSuccess('Permission updated successfully');
         } else {
             return redirect()->back()->withError('Something went wrong while updating permission');
-        }    
+        }
     }
 
     public function getPermissions($editid = null)
@@ -63,7 +63,7 @@ class PermissionsController extends Controller
     public function updateStatus($editid = null)
     {
         $result = $this->serviceClass->changeStatus($editid);
-        if($result === true) {
+        if ($result === true) {
             return redirect()->back()->withSuccess('Status updated successfully');
         } else {
             return redirect()->back()->withError('Something went wrong while updating status');

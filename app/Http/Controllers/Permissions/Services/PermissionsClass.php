@@ -8,7 +8,7 @@ use App\Models\Categories;
 use App\Models\RolesPermissions;
 use DB;
 
-class PermissionsClass 
+class PermissionsClass
 {
     private $service = null;
 
@@ -20,7 +20,7 @@ class PermissionsClass
     public function getCategories()
     {
         try {
-            $categoriesQuery = Categories::where('status',true);
+            $categoriesQuery = Categories::where('status', true);
             $categoriesList = $categoriesQuery->get();
             return $categoriesList;
         } catch (\Throwable $th) {
@@ -31,7 +31,7 @@ class PermissionsClass
     public function getPermissionDetails($editid)
     {
         try {
-            $permissionDetails = Permissions::where('permission_id',$editid)->get();
+            $permissionDetails = Permissions::where('permission_id', $editid)->get();
             return $permissionDetails;
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Something went wrong'], 500);
@@ -59,7 +59,7 @@ class PermissionsClass
         $data = $request->all();
         $response = $this->service->ConstructPermissionObj($data);
         try {
-            $result = Permissions::where('permission_id',$editid)->update($response);
+            $result = Permissions::where('permission_id', $editid)->update($response);
             $responseData = true;
         } catch (\Throwable $th) {
             //throw $th;
@@ -73,19 +73,19 @@ class PermissionsClass
         $responseData = false;
         $status = Permissions::find($editid);
         try {
-            $result = Permissions::where('permission_id',$editid)->update([
-                'status' => !$status->status,
+            $result = Permissions::where('permission_id', $editid)->update([
+                'status'     => !$status->status,
                 'updated_by' => env('USER_ID', 1)
             ]);
 
             if ($status->status === true) {
                 // RolesPermissions::where('permission_id', $editid)->delete();
 
-                $roleSPermissions = RolesPermissions::where('permission_id',$editid)
-                ->update([
-                    'status' => !$status->status,
-                    'updated_by' => env('USER_ID', 1)
-                ]);
+                $roleSPermissions = RolesPermissions::where('permission_id', $editid)
+                    ->update([
+                        'status'     => !$status->status,
+                        'updated_by' => env('USER_ID', 1)
+                    ]);
             }
             $responseData = true;
         } catch (\Throwable $th) {
@@ -98,21 +98,22 @@ class PermissionsClass
     public function fetchPermissions($editid)
     {
         $responseData = [];
-        
+
         try {
             $permissionDetails = DB::table('categories as c')
-            ->select('c.category_id as cid',
-            'c.title as category_name',
-            'permissions.*',
-            );
+                ->select(
+                    'c.category_id as cid',
+                    'c.title as category_name',
+                    'permissions.*',
+                );
             $permissionDetails->leftjoin('permissions', 'permissions.category_id', '=', 'c.category_id');
-            
+
             if ($editid) {
                 $permissionDetails->where('permissions.permission_id', $editid);
                 // ->where('permissions.status','=',true);
             }
-            $permissionDetails->where('permissions.status','=',true);
-            $permissionDetails->where('c.status','=',true);
+            $permissionDetails->where('permissions.status', '=', true);
+            $permissionDetails->where('c.status', '=', true);
             $permissionDetails = $permissionDetails->get()->groupBy('cid');
 
             // foreach($permissionDetails as $key => $val){
@@ -121,16 +122,16 @@ class PermissionsClass
             //         # code...
             //     }
             // }
-            
+
             $responseData = response()->json([
-                'status' => 200,
+                'status'  => 200,
                 'message' => 'data fetched successfully',
-                'data' => $permissionDetails
+                'data'    => $permissionDetails
             ]);
         } catch (\Throwable $th) {
             throw $th;
             $responseData = response()->json([
-                'status' => 500,
+                'status'  => 500,
                 'message' => 'something went wrong'
             ]);
         }
