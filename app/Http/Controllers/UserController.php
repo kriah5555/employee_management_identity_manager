@@ -126,11 +126,6 @@ class UserController extends Controller
         return response()->json(['messages' => $messages]);
     }
 
-    public function codeCheck(ForgotPassword $request)
-    {
-        $messages = $this->user_service->codeCheck($request->validated());
-        return response()->json(['messages' => $messages]);
-    }
 
     public function resetPassword(ForgotPassword $request)
     {

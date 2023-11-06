@@ -6,8 +6,16 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use App\Http\Rules\{CreateEditEmployee, CreateUserRequest};
 use App\Models\{
-    Countries, CountryNationality, Gender, Languages, MaritalStatus, User,
-    UserBasicDetails, UserPersonalDetails, UserAddressDetails, InviteUserTokens
+    Countries,
+    CountryNationality,
+    Gender,
+    Languages,
+    MaritalStatus,
+    User,
+    UserBasicDetails,
+    UserPersonalDetails,
+    UserAddressDetails,
+    InviteUserTokens
 };
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Str;
@@ -39,13 +47,12 @@ class UserService
         $this->basic = new UserBasicDetails();
         $this->personal = new UserPersonalDetails();
         $this->invite =  new InviteUserTokens();
-
     }
 
     public static function formatCountryAndNationality($raw)
     {
         $data = [];
-        foreach($raw as $value) {
+        foreach ($raw as $value) {
             $data['country'][] = [
                 'id' => $value['id'],
                 'value' => $value['name'],
@@ -79,18 +86,17 @@ class UserService
     public function createUserName($userName, $flag = null)
     {
 
-        if ($this->userObject->checkUserNameExist($userName.$flag) == null)
-        {
-            return $userName.$flag;
+        if ($this->userObject->checkUserNameExist($userName . $flag) == null) {
+            return $userName . $flag;
         } else {
-            return $this->createUserName($userName, $flag+1);
+            return $this->createUserName($userName, $flag + 1);
         }
     }
 
     public function createEmployeeService($employee_details)
     {
-        $userName = str_replace(' ', '', $employee_details['first_name'].$employee_details['last_name']);
-        $password = str_replace(' ', '', $employee_details['first_name'].date('dmY', strtotime($employee_details['birth_date'])));
+        $userName = str_replace(' ', '', $employee_details['first_name'] . $employee_details['last_name']);
+        $password = str_replace(' ', '', $employee_details['first_name'] . date('dmY', strtotime($employee_details['birth_date'])));
         $userName = $this->createUserName($userName);
 
         $newUser = $this->userObject->create(
@@ -175,22 +181,54 @@ class UserService
     }
 
 
+    // public function resetPassword( $request)
+    // {
 
-        public function resetPassword( $request)
-        {
+    //         $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
 
-                $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
-
-                // Check if it has expired: the time is one hour
-                if ($passwordReset->created_at > now()->addMinutes(15)) {
-                    $passwordReset->delete();
-                    return response(['message' => trans('passwords.code_is_expire')], 422);
-                }
+    //         // Check if it has expired: the time is one hour
+    //         if ($passwordReset->created_at > now()->addMinutes(15)) {
+    //             $passwordReset->delete();
+    //             return response(['message' => trans('passwords.code_is_expire')], 422);
+    //         }
 
 
-                // If the code is valid and not expired, update the user's password
-                $user = User::where('email', $passwordReset->email)->first();
-                $newPassword = $request['new_password'];
+    //         // If the code is valid and not expired, update the user's password
+    //         $user = User::where('email', $passwordReset->email)->first();
+    //         $newPassword = $request['new_password'];
+    //         $user->password = Hash::make($newPassword);
+    //         $user->save();
+
+    //         // Delete the used reset code
+    //         $passwordReset->delete();
+
+    //         return response([
+    //             'code' => $passwordReset->code,
+    //             'message' => trans('passwords.code_is_valid'),
+    //             'updated_password' => $newPassword, // Include the updated password in the response
+    //         ], 200);
+
+    // }
+
+    public function resetPassword($request)
+    {
+        try {
+            $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
+
+            // Check if it has expired: the time is one hour
+            if ($passwordReset->created_at > now()->addMinutes(15)) {
+                $passwordReset->delete();
+                return response(['message' => trans('passwords.code_is_expire')], 422);
+            }
+
+            // If the code is valid and not expired, update the user's password
+            $user = User::where('email', $passwordReset->email)->first();
+            $newPassword = $request['new_password'];
+            $confirmPassword = $request['confirm_new_password'];
+
+            // Check if new_password and confirm_password match
+            if ($newPassword === $confirmPassword) {
+                // Hash and save the new password
                 $user->password = Hash::make($newPassword);
                 $user->save();
 
@@ -200,8 +238,13 @@ class UserService
                 return response([
                     'code' => $passwordReset->code,
                     'message' => trans('passwords.code_is_valid'),
-                    'updated_password' => $newPassword, // Include the updated password in the response
+                    'updated_password' => $newPassword,
                 ], 200);
-
+            } else {
+                return response(['message' => 'New password and confirmation do not match.'], 422);
+            }
+        } catch (\Exception $e) {
+            return response(['error' => 'An error occurred while resetting the password.'], 500);
         }
+    }
 }

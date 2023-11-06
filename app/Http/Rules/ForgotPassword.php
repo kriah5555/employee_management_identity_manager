@@ -27,6 +27,7 @@ class ForgotPassword extends ApiRequest
             $rules = [
                 'code' => 'required|string|exists:reset_code_passwords',
                 'new_password' => 'required|string|min:8',
+                'confirm_new_password'=>'required|string|min:8',
             ];
         }
 
@@ -45,6 +46,7 @@ class ForgotPassword extends ApiRequest
             'new_password.required' => 'Password is required.',
             'new_password.string' => 'Password must be a string.',
             'new_password.min' => 'Password should be a minimum of eight (8) characters.',
+
         ];
     }
 }
