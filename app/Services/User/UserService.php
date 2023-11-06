@@ -244,26 +244,5 @@ class UserService
         return config('constants.LANGUAGE_OPTIONS');
     }
 
-    public function updateEmployee($request)
-    {
-        $id = $request['user_id'];
-
-        // Select all columns from the 'users' table
-    //     $userDetails = User::where('id', $id)->first();
-    //     $userDetails = User::select('users.*', 'user_contact_details.*')
-    // ->join('user_contact_details', 'users.id', '=', 'user_contact_details.user_id')
-    // ->get();
-    $userDetails = User::with('user_basic_details')->find($id);
-
-
-
-        if (!$userDetails) {
-            // Handle not found case
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        // Print or return the 'users' table details
-        return response()->json(['userDetails' => $userDetails]);
-    }
 
 }
