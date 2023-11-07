@@ -144,7 +144,6 @@ class ChatService
         // $conversationId=$request->conversation_id;
 
         try {
-
             $conversation = Conversation::find($request->conversation_id);
 
             if (!$conversation) {
@@ -166,7 +165,6 @@ class ChatService
     {
 
         try {
-
             $message = Message::find($request->message_id);
 
             if (!$message) {
