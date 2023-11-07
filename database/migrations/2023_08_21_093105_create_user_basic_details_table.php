@@ -62,6 +62,16 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+        Schema::create('user_contact_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->string('email')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
