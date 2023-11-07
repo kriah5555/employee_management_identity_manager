@@ -102,6 +102,7 @@ Route::delete('/message/{id}', [ChatController::class, 'deleteMessage']);
 
 
 //forgot password
+
 Route::post('employee/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('employee/reset-password', [UserController::class, 'resetPassword']);
 

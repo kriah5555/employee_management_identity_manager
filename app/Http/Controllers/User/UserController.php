@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\User\{UserService, GenderService, MaritalStatusService};
 use App\Http\Rules\{CreateEditEmployee, CreateUserRequest, InviteEmployee};
+use App\Http\Rules\ForgotPassword;
 
 
 class UserController extends Controller
@@ -165,4 +166,22 @@ class UserController extends Controller
             JsonResponse::HTTP_OK,
         );
     }
+
+
+    public function forgotPassword(ForgotPassword $request)
+    {
+
+            $messages = $this->userService->forgotPassword($request->validated());
+            return $messages;
+
+    }
+
+
+    public function resetPassword(ForgotPassword $request)
+    {
+        $messages = $this->userService->resetPassword($request->validated());
+        return $messages;
+    }
+
+
 }

@@ -49,4 +49,14 @@ class ForgotPassword extends ApiRequest
 
         ];
     }
+    
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors()->all();
+
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => implode(' ', $errors),
+        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+    }
 }

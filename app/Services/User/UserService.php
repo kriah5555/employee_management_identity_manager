@@ -174,41 +174,12 @@ class UserService
             // Send an email to the user
             Mail::to($email)->send(new SendCodeResetPassword($code));
 
-            return response(['message' => "OTP sent to email Id"], 200);
+            return response()->json(['status' => true, 'message' => "OTP sent to email Id"], 200);
         } catch (\Exception $e) {
-            return response(['message' => 'Email not found.'], 422);
+            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
-
-    // public function resetPassword( $request)
-    // {
-
-    //         $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
-
-    //         // Check if it has expired: the time is one hour
-    //         if ($passwordReset->created_at > now()->addMinutes(15)) {
-    //             $passwordReset->delete();
-    //             return response(['message' => trans('passwords.code_is_expire')], 422);
-    //         }
-
-
-    //         // If the code is valid and not expired, update the user's password
-    //         $user = User::where('email', $passwordReset->email)->first();
-    //         $newPassword = $request['new_password'];
-    //         $user->password = Hash::make($newPassword);
-    //         $user->save();
-
-    //         // Delete the used reset code
-    //         $passwordReset->delete();
-
-    //         return response([
-    //             'code' => $passwordReset->code,
-    //             'message' => trans('passwords.code_is_valid'),
-    //             'updated_password' => $newPassword, // Include the updated password in the response
-    //         ], 200);
-
-    // }
 
     public function resetPassword($request)
     {
@@ -235,13 +206,19 @@ class UserService
                 // Delete the used reset code
                 $passwordReset->delete();
 
-                return response([
-                    'code' => $passwordReset->code,
-                    'message' => trans('passwords.code_is_valid'),
-                    'updated_password' => $newPassword,
+                return response()->json([
+                    'success' => true,
+                    'message' => [
+                        'code' => $passwordReset->code,
+                        'message' => trans('passwords.code_is_valid'),
+                        'updated_password' => $newPassword,
+                    ]
                 ], 200);
+
             } else {
-                return response(['message' => 'New password and confirmation do not match.'], 422);
+
+            return response()->json(['status' => false, 'message' => 'New password and confirmation do not match.'], 400);
+
             }
         } catch (\Exception $e) {
             return response(['error' => 'An error occurred while resetting the password.'], 500);

@@ -20,7 +20,7 @@ class ChatController extends Controller
     public function createConversation(Request $request)
     {
         $conversation = $this->chatService-> checkConversation($request);
-        return response()->json(['conversation_id' => $conversation->id]);
+         return $conversation;
     }
     public function getMessages($conversationId)
     {
@@ -31,19 +31,19 @@ class ChatController extends Controller
     public function getMessagesInConversationFormat($conversationId)
     {
         $formattedMessages = $this->chatService->getMessagesInConversationFormat($conversationId);
-        return response()->json(['conversation' => $formattedMessages]);
+        return $formattedMessages;
     }
 
     public function sendMessage(Request $request)
     {
         $response = $this->chatService->sendMessage( $request);
-        return response()->json($response);
+        return $response;
     }
 
     public function deleteConversation($conversationId)
     {
        $response =  $this->chatService->deleteConversation($conversationId);
-        return response()->json(['conversation' => $response]);
+       return $response;
 
     }
 
@@ -51,7 +51,7 @@ class ChatController extends Controller
     public function deleteMessage($messageId)
     {
         $response = $this->chatService->deleteMessage($messageId);
-        return response()->json(['message ' => $response]);
+        return $response;
 
     }
 
