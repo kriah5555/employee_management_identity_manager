@@ -238,11 +238,11 @@ class UserService
 
     public function getDependentSpouseOptions()
     {
-        return getValueLabelOptionsFromConfig('constants.DEPENDENT_SPOUSE_OPTIONS');
+        return config('constants.DEPENDENT_SPOUSE_OPTIONS');
     }
 
     public function getLanguageOptions()
     {
-        return getValueLabelOptionsFromConfig('constants.LANGUAGE_OPTIONS');
+        return config('constants.LANGUAGE_OPTIONS');
     }
 }

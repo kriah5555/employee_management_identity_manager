@@ -15,13 +15,13 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('nationality');
             $table->foreignId('gender_id')->nullable()->references('id')->on('genders')->onDelete('cascade');
             $table->date('date_of_birth');
             $table->string('place_of_birth')->nullable();
             $table->date('license_expiry_date')->nullable();
             $table->string('language')->default('en');
             $table->longText('extra_info')->nullable();
-            $table->boolean('status')->default(true);
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
@@ -37,7 +37,6 @@ return new class extends Migration {
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->smallInteger('address_type')->nullable();
-            $table->boolean('status')->default(true);
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
@@ -48,7 +47,6 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('account_number')->nullable();
             // $table->foreignId('bank_card_file_id')->nullable()->references('id')->on('files')->onDelete('cascade');
-            $table->boolean('status')->default(true);
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
@@ -59,7 +57,16 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('marital_status_id')->nullable()->references('id')->on('marital_statuses')->onDelete('cascade');
             $table->string('dependent_spouse')->nullable();
-            $table->boolean('status')->default(true);
+            $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+        Schema::create('user_contact_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->string('email')->nullable();
+            $table->string('phone_number')->nullable();
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

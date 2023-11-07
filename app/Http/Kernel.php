@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'decrypt-request'    => \App\Http\Middleware\DecryptRequest::class,
         'encrypt-response'   => \App\Http\Middleware\EncryptResponse::class,
         'validate.api.token' => \App\Http\Middleware\ValidateApiToken::class,
+        'setactiveuser'      => \App\Http\Middleware\SetActiveUser::class,
     ];
 }

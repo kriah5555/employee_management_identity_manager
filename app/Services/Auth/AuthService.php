@@ -91,4 +91,13 @@ class AuthService
         return $response->json();
     }
 
+    public function setActiveUserByUid($uid)
+    {
+        $user = User::findOrFail($uid);
+        if ($user) {
+            // Log in the user
+            Auth::login($user);
+        }
+    }
+
 }
