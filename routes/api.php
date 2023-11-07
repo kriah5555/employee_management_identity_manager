@@ -95,10 +95,9 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 
 Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
-Route::get('/get-conversation/{conversationId}', [ChatController::class, 'getMessagesInConversationFormat']);
-Route::get('/get-messages/{conversationId}', [ChatController::class, 'getMessages']);
-Route::delete('/conversation/{id}', [ChatController::class, 'deleteConversation']);
-Route::delete('/message/{id}', [ChatController::class, 'deleteMessage']);
+Route::post('/get-conversation', [ChatController::class, 'getMessagesInConversationFormat']);
+Route::delete('/delete-conversation', [ChatController::class, 'deleteConversation']);
+Route::delete('/delete-message', [ChatController::class, 'deleteMessage']);
 
 
 //forgot password

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendCodeResetPassword;
 use App\Models\ResetCodePassword;
+use Illuminate\Support\Facades\DB;
 
 use function PHPSTORM_META\type;
 
@@ -157,6 +158,14 @@ class UserService
     {
         try {
             $email = $request['email']; // Get the email from the request
+            $username = $request['username'];
+
+            // Check if there's a matching record in the database
+            $matchingUser = DB::table('users')->where('email', $email)->where('username', $username)->first();
+
+            if (!$matchingUser) {
+                return response()->json(['status' => false, 'message' => "Email and username do not match"], 400);
+            }
 
             // Delete all old codes that the user sent before.
             ResetCodePassword::where('email', $email)->delete();
@@ -174,17 +183,18 @@ class UserService
             // Send an email to the user
             Mail::to($email)->send(new SendCodeResetPassword($code));
 
-            return response()->json(['status' => true, 'message' => "OTP sent to email Id"], 200);
+            return response()->json(['status' => true, 'message' => "OTP has been sent to the email id."], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
 
 
     public function resetPassword($request)
     {
         try {
-            $passwordReset = ResetCodePassword::firstWhere('code', $request['code']);
+            $passwordReset = ResetCodePassword::firstWhere('code', $request['otp']);
 
             // Check if it has expired: the time is one hour
             if ($passwordReset->created_at > now()->addMinutes(15)) {
@@ -208,11 +218,12 @@ class UserService
 
                 return response()->json([
                     'success' => true,
-                    'message' => [
-                        'code' => $passwordReset->code,
-                        'message' => trans('passwords.code_is_valid'),
-                        'updated_password' => $newPassword,
-                    ]
+                    // 'message' => [
+                    //     'code' => $passwordReset->code,
+                    //     'message' => trans('passwords.code_is_valid'),
+                    //     'updated_password' => $newPassword,
+                    // ]
+                    'message' => 'password updated successfully'
                 ], 200);
 
             } else {
@@ -221,7 +232,7 @@ class UserService
 
             }
         } catch (\Exception $e) {
-            return response(['error' => 'An error occurred while resetting the password.'], 500);
+            return response(['message' => 'An error occurred while resetting the password.'], 500);
         }
     }
 

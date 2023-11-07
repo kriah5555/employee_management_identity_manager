@@ -58,7 +58,7 @@ class ChatService
             $validUserIds = User::whereIn('id', $userIds)->pluck('id')->all();
 
             if (count($validUserIds) !== count($userIds)) {
-                return response()->json(['status' => false, 'error' => 'Invalid sender or receiver IDs provided'], 400);
+                return response()->json(['status' => false, 'message' => 'Invalid sender or receiver IDs provided'], 400);
             }
 
             // If no existing conversation is found, create a new one
@@ -69,9 +69,9 @@ class ChatService
             $conversation->save();
             $conversation->users()->attach($validUserIds);
 
-            return response()->json(['status' => true, 'message' => $conversation], 200);
+            return response()->json(['status' => true, 'message' => 'conversation created successfully'], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -80,28 +80,29 @@ class ChatService
 
 
 
-    public function getMessagesInConversationFormat($conversationId)
+    public function getMessagesInConversationFormat($request)
     {
         try {
             // Validation rules for conversationId
             $rules = [
-                'conversationId' => 'required|integer|exists:conversations,id',
+                'conversation_id' => 'required|integer|exists:conversations,id',
             ];
 
             $customMessages = [
-                'conversationId.required' => 'Conversation ID is required.',
-                'conversationId.integer' => 'Conversation ID must be an integer.',
-                'conversationId.exists' => 'Conversation ID does not exist.',
+                'conversation_id.required' => 'Conversation ID is required.',
+                'conversation_id.integer' => 'Conversation ID must be an integer.',
+                'conversation_id.exists' => 'Conversation ID does not exist.',
             ];
 
-            $validator = Validator::make(['conversationId' => $conversationId], $rules, $customMessages);
+            $validator = Validator::make($request->all(), $rules, $customMessages);
+
 
             if ($validator->fails()) {
                 $errorMessages = $validator->errors()->all();
                 return response()->json(['status' => false, 'message' => $errorMessages[0]], 400);
             }
 
-            $messages = Message::where('conversation_id', $conversationId)
+            $messages = Message::where('conversation_id', $request->conversation_id)
                 ->orderBy('created_at', 'asc')
                 ->get();
 
@@ -116,9 +117,9 @@ class ChatService
                 ];
             }
 
-            return response()->json(['status' => true, 'messages' => $formattedMessages], 200);
+            return response()->json(['status' => true, 'conversation_data' => $formattedMessages], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -189,12 +190,12 @@ class ChatService
                 $response['file_path'] = asset('storage/' . $attachmentPath);
             }
 
-            return response()->json(['status' => true, 'message' => $messages], 200);
+            return response()->json(['status' => true, 'message' => 'Message sent successfully'], 200);
 
 
             // Example: Handle attachments, create messages, and return the response
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -204,28 +205,31 @@ class ChatService
 
 
 
-    public function deleteConversation($conversationId)
+    public function deleteConversation($request)
     {
+        // $conversationId=$request->conversation_id;
+
         try {
             // Validation rules for conversationId
             $rules = [
-                'conversationId' => 'required|integer|exists:conversations,id',
+                'conversation_id' => 'required|integer|exists:conversations,id',
             ];
+            // dd($conversationId);
 
             $customMessages = [
-                'conversationId.required' => 'Conversation ID is required.',
-                'conversationId.integer' => 'Conversation ID must be an integer.',
-                'conversationId.exists' => 'Conversation ID does not exist.',
+                'conversation_id.required' => 'Conversation ID is required.',
+                'conversation_id.integer' => 'Conversation ID must be an integer.',
+                'conversation_id.exists' => 'Conversation ID does not exist.',
             ];
 
-            $validator = Validator::make(['conversationId' => $conversationId], $rules, $customMessages);
+            $validator = Validator::make($request->all(), $rules, $customMessages);
 
             if ($validator->fails()) {
                 $errorMessages = $validator->errors()->all();
                 return response()->json(['status' => false, 'messages' => $errorMessages[0]], 400);
             }
 
-            $conversation = Conversation::find($conversationId);
+            $conversation = Conversation::find($request->conversation_id);
 
             if (!$conversation) {
                 return response()->json(['status' => false, 'messages' => 'Conversation is not available'], 404);
@@ -233,45 +237,48 @@ class ChatService
 
             $conversation->deleteConversation();
 
-            return response()->json(['status' => true, 'message' => "$conversationId deleted"], 200);
+            return response()->json(['status' => true, 'message' => "Conversation  deleted successfully"], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
 
-    public function deleteMessage($messageId)
+
+
+    public function deleteMessage($request)
     {
+
         try {
             // Validation rules for messageId
             $rules = [
-                'messageId' => 'required|integer|exists:messages,id',
+                'message_id' => 'required|integer|exists:messages,id',
             ];
 
             $customMessages = [
-                'messageId.required' => 'Message ID is required.',
-                'messageId.integer' => 'Message ID must be an integer.',
-                'messageId.exists' => 'Message ID does not exist.',
+                'message_id.required' => 'Message ID is required.',
+                'message_id.integer' => 'Message ID must be an integer.',
+                'message_id.exists' => 'Message ID does not exist.',
             ];
 
-            $validator = Validator::make(['messageId' => $messageId], $rules, $customMessages);
+            $validator = Validator::make($request->all(), $rules, $customMessages);
 
             if ($validator->fails()) {
                 $errorMessages = $validator->errors()->all();
-                return response()->json(['status' => false, 'error' => $errorMessages[0]], 400);
+                return response()->json(['status' => false, 'message' => $errorMessages[0]], 400);
             }
 
-            $message = Message::find($messageId);
+            $message = Message::find($request->message_id);
 
             if (!$message) {
-                return response()->json(['status' => false, 'error' => 'Message is not available'], 404);
+                return response()->json(['status' => false, 'message' => 'Message is not available'], 404);
             }
 
             $message->delete();
 
-            return response()->json(['status' => true, 'message' => "$messageId deleted"], 200);
+            return response()->json(['status' => true, 'message' => "Message deleted successfully"], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
 

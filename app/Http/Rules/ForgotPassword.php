@@ -22,10 +22,11 @@ class ForgotPassword extends ApiRequest
         if (str_contains($path, 'employee/forgot-password')) {
             $rules = [
                 'email' => 'required|email|exists:users',
+                'username' => 'required|exists:users',
             ];
         } else {
             $rules = [
-                'code' => 'required|string|exists:reset_code_passwords',
+                'otp' => ['required','string',Rule::exists('reset_code_passwords','code')],
                 'new_password' => 'required|string|min:8',
                 'confirm_new_password'=>'required|string|min:8',
             ];
@@ -37,19 +38,21 @@ class ForgotPassword extends ApiRequest
     public function messages()
     {
         return [
+            'username.required' => 'username is required.',
+            'username.exists' => 'username not found.',
             'email.required' => 'Email is required.',
             'email.email' => 'Email must be a valid email address.',
             'email.exists' => 'Email not found.',
-            'code.required' => 'OTP is required.',
-            'code.string' => 'OTP must be a string.',
-            'code.exists' => 'Invalid OTP.',
+            'otp.required' => 'OTP is required.',
+            'otp.string' => 'OTP must be a string.',
+            'otp.exists' => 'Invalid OTP.',
             'new_password.required' => 'Password is required.',
             'new_password.string' => 'Password must be a string.',
             'new_password.min' => 'Password should be a minimum of eight (8) characters.',
 
         ];
     }
-    
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
