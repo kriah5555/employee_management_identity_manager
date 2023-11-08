@@ -10,12 +10,10 @@ use App\Models\{
     Gender,
     Languages,
     MaritalStatus,
-    User,
-    UserBasicDetails,
-    UserPersonalDetails,
-    UserAddressDetails,
     InviteUserTokens
 };
+use App\Models\User\User;
+use App\Models\User\UserBasicDetails;
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -45,7 +43,6 @@ class UserService
         $this->ulid = new Ulid();
         $this->userObject = new User();
         $this->basic = new UserBasicDetails();
-        $this->personal = new UserPersonalDetails();
         $this->invite = new InviteUserTokens();
 
     }
