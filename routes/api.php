@@ -106,9 +106,6 @@ Route::post('employee/forgot-password', [UserController::class, 'forgotPassword'
 Route::post('employee/reset-password', [UserController::class, 'resetPassword']);
 
 
-
-
-
 Route::get('user/get-options-for-user-basic-details', [UserController::class, 'getOptionsForUserBasicDetails']);
 
 $resources = [
@@ -139,3 +136,6 @@ Route::group(['middleware' => 'setactiveuser'], function () {
         Route::resource($uri, $controller)->only($methods);
     }
 });
+
+//update user details
+Route::put('update-employee', [UserController::class, 'updateEmployee']);

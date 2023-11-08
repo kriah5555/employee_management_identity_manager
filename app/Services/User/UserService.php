@@ -245,4 +245,12 @@ class UserService
     {
         return config('constants.LANGUAGE_OPTIONS');
     }
+
+    public function updateEmployee($request)
+    {
+        dd($request);
+
+    }
+
+
 }

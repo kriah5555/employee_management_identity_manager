@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 use App\Models\BaseModel;
 use App\Traits\UserAudit;
+use App\Models\User\User;
 
 class UserAddress extends BaseModel
 {
@@ -15,12 +16,8 @@ class UserAddress extends BaseModel
         'postal_code',
         'city',
         'country',
-        'status',
         'latitude',
-        'longitude',
-        'address_type',
-        'extra_info',
-        'status',
+        'longitude'
     ];
     /**
      * The table associated with the model.
@@ -61,11 +58,12 @@ class UserAddress extends BaseModel
         'postal_code',
         'city',
         'country',
-        'status',
         'latitude',
-        'longitude',
-        'address_type',
-        'extra_info',
-        'status',
+        'longitude'
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

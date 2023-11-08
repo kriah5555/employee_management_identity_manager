@@ -4,30 +4,23 @@ namespace App\Models\User;
 
 use App\Models\BaseModel;
 use App\Traits\UserAudit;
-use App\Models\User\User;
 
-class UserBasicDetails extends BaseModel
+class UserContactDetails extends BaseModel
 {
     use UserAudit;
-    protected static $sort = ['first_name'];
+
+
     protected $columnsToLog = [
         'user_id',
-        'first_name',
-        'last_name',
-        'nationality',
-        'gender_id',
-        'date_of_birth',
-        'place_of_birth',
-        'license_expiry_date',
-        'language',
-        'extra_info'
+        'email',
+        'phone_number'
     ];
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'user_basic_details';
+    protected $table = 'user_contact_details';
 
     /**
      * The primary key associated with the table.
@@ -48,8 +41,7 @@ class UserBasicDetails extends BaseModel
         'created_at',
         'updated_at',
         'deleted_at',
-        'date_of_birth',
-        'license_expiry_date'
+        'deleted_at'
     ];
 
     /**
@@ -59,18 +51,7 @@ class UserBasicDetails extends BaseModel
      */
     protected $fillable = [
         'user_id',
-        'first_name',
-        'last_name',
-        'nationality',
-        'gender_id',
-        'date_of_birth',
-        'place_of_birth',
-        'license_expiry_date',
-        'language',
-        'extra_info'
+        'email',
+        'phone_number'
     ];
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

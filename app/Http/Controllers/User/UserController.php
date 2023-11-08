@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Rules\ForgotPassword;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\User\{UserService, GenderService, MaritalStatusService};
-use App\Http\Rules\{CreateEditEmployee, CreateUserRequest, InviteEmployee};
-use App\Http\Rules\ForgotPassword;
+use App\Http\Rules\{CreateEditEmployee, CreateUserRequest, InviteEmployee, UpdateEmployeeRule};
 
 
 class UserController extends Controller
@@ -84,10 +84,6 @@ class UserController extends Controller
         return UserService::getEmployeeOptionsService();
     }
 
-    public function updateEmployee()
-    {
-
-    }
 
     public function createEmployee(CreateEditEmployee $employee_details)
     {
@@ -186,6 +182,12 @@ class UserController extends Controller
     public function resetPassword(ForgotPassword $request)
     {
         $messages = $this->userService->resetPassword($request->validated());
+        return $messages;
+    }
+
+    public function updateEmployee(UpdateEmployeeRule $request)
+    {
+        $messages = $this->userService->updateEmployee($request->validated());
         return $messages;
     }
 
