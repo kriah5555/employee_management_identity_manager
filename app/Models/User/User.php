@@ -10,10 +10,14 @@ use Spatie\Permission\Traits\HasPermissions;
 use App\Models\User\UserBasicDetails;
 use App\Models\User\UserBankAccount;
 use App\Models\User\UserFamilyDetails;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, HasPermissions;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, HasPermissions;
 
     protected $table = 'users';
 
