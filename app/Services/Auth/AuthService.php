@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Client as OClient;
