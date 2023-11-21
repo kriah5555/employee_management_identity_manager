@@ -60,6 +60,43 @@ class AuthController extends Controller
         }
     }
 
+
+    public function webLogin(LoginRequest $request)
+    {
+        try {
+            $user = $this->authService->validateUserCredentials($request->validated());
+            if (!$user) {
+                return returnUnauthorizedResponse('The user credentials were incorrect.');
+            } elseif ($this->checkWebAppAccess($user)) {
+                $token = $this->authService->generateUserTokens($request->validated());
+                return returnResponse(
+                    [
+                        'success' => true,
+                        'data'    => [
+                            'uid'      => $user->id,
+                            'username' => $user->username,
+                            'token'    => $token,
+                        ]
+                    ],
+                    JsonResponse::HTTP_OK,
+                );
+            } else {
+                return returnUnauthorizedResponse('No access.');
+            }
+
+        } catch (\Exception $e) {
+            return returnIntenalServerErrorResponse($e->getMessage());
+        }
+    }
+
+    public function checkWebAppAccess($user)
+    {
+        if ($user->hasPermissionTo('Web app access')) {
+            return true;
+        }
+        return false;
+    }
+
     public function generateAccessToken(GenerateAccessTokenRequest $request)
     {
         try {

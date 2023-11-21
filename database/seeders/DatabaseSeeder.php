@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\{
     CountriesSeeder,
     LanguagesSeeder,
-    RolesSeeder,
+    RolesAndPermissionsSeeder,
     SuperdminSeeder,
     FileTypesSeeder
 };
@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
                 // CountriesSeeder::class,
                 // LanguagesSeeder::class,
-            RolesSeeder::class,
+            RolesAndPermissionsSeeder::class,
                 // FileTypesSeeder::class,
             SuperdminSeeder::class
         ]);

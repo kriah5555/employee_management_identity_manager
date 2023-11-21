@@ -12,12 +12,12 @@ use App\Models\User\UserBankAccount;
 use App\Models\User\UserFamilyDetails;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, HasPermissions;
+    protected $guard_name = 'api';
 
     protected $table = 'users';
 

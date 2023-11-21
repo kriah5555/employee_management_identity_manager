@@ -40,6 +40,8 @@ Route::post('/create-user', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/web-login', [AuthController::class, 'webLogin']);
+
 Route::post('/generate-access-token', [AuthController::class, 'generateAccessToken']);
 
 Route::middleware('validate.api.token')->group(function () {
