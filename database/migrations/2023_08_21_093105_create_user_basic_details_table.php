@@ -13,11 +13,11 @@ return new class extends Migration {
         Schema::create('user_basic_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('nationality');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('nationality')->nullable();
             $table->foreignId('gender_id')->nullable()->references('id')->on('genders')->onDelete('cascade');
-            $table->date('date_of_birth');
+            $table->date('date_of_birth')->nullable();
             $table->string('place_of_birth')->nullable();
             $table->date('license_expiry_date')->nullable();
             $table->string('language')->default('en');
@@ -30,10 +30,10 @@ return new class extends Migration {
         Schema::create('user_addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
-            $table->string('street_house_no');
-            $table->string('postal_code');
-            $table->string('city');
-            $table->string('country');
+            $table->string('street_house_no')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->smallInteger('address_type')->nullable();
