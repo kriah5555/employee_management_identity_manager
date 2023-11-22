@@ -24,6 +24,10 @@ class RolesAndPermissionsSeeder extends Seeder
                 'name'       => 'Access all companies',
                 'guard_name' => 'api'
             ],
+            [
+                'name'       => 'Access company',
+                'guard_name' => 'api'
+            ],
         ];
         foreach ($permissions as $permissionDetails) {
             Permission::create($permissionDetails);
@@ -50,8 +54,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'moderator'
-                ,
+                'name'        => 'moderator',
                 'permissions' => [
                     'Web app access',
                     'Mobile app access',
@@ -64,53 +67,52 @@ class RolesAndPermissionsSeeder extends Seeder
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'customer_admin'
-                ,
+                'name'        => 'customer_admin',
                 'permissions' => [
                     'Web app access',
-                    'Mobile app access'
+                    'Mobile app access',
+                    'Access company'
                 ]
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'hr_manager'
-                ,
+                'name'        => 'hr_manager',
                 'permissions' => [
                     'Web app access',
-                    'Mobile app access'
+                    'Mobile app access',
+                    'Access company'
                 ]
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'manager'
-                ,
+                'name'        => 'manager',
                 'permissions' => [
                     'Web app access',
-                    'Mobile app access'
+                    'Mobile app access',
+                    'Access company'
                 ]
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'planner'
-                ,
+                'name'        => 'planner',
                 'permissions' => [
                     'Web app access',
-                    'Mobile app access'
+                    'Mobile app access',
+                    'Access company'
                 ]
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'staff'
-                ,
+                'name'        => 'staff',
                 'permissions' => [
                     'Web app access',
-                    'Mobile app access'
+                    'Mobile app access',
+                    'Access company'
                 ]
             ],
             [
                 'guard_name'  => 'api',
-                'name'        => 'employee'
-                ,
+                'name'        => 'employee',
                 'permissions' => [
                     'Mobile app access'
                 ]
