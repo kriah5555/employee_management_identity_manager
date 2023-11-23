@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('users_roles')) {
-            Schema::create('users_roles', function (Blueprint $table) {
-                $table->id();
-                $table->integer('user_id');
-                $table->integer('role_id');
-                $table->timestamps();
-            });
-        }
+        Schema::create('files', function (Blueprint $table) {
+            $table->id();
+            $table->string('file_name');
+            $table->string('file_url');
+            $table->integer('status');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users_roles');
+        Schema::dropIfExists('files');
     }
 };

@@ -9,7 +9,7 @@ class Profiles extends Model
 {
     use HasFactory;
 
-    protected $table =  'profiles';
+    protected $table = 'profiles';
 
     /**
      * The primary key for the table.

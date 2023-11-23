@@ -9,7 +9,7 @@ class UserRoles extends Model
 {
     use HasFactory;
 
-    protected $table =  'users_roles';
+    protected $table = 'users_roles';
 
     protected $fillable = [
         'user_id',

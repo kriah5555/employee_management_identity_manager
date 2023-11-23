@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => 'web',
+    'defaults'              => [
+        'guard'     => 'web',
         'passwords' => 'users',
     ],
 
@@ -35,14 +35,14 @@ return [
     |
     */
 
-    'guards' => [
+    'guards'                => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
         ],
-     
+
         'api' => [
-            'driver' => 'passport',
+            'driver'   => 'passport',
             'provider' => 'users',
         ],
     ],
@@ -64,10 +64,10 @@ return [
     |
     */
 
-    'providers' => [
+    'providers'             => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'driver'   => 'eloquent',
+            'model'    => App\Models\User\User::class,
             'username' => 'username',
         ],
 
@@ -96,11 +96,11 @@ return [
     |
     */
 
-    'passwords' => [
+    'passwords'             => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'table'    => 'password_reset_tokens',
+            'expire'   => 60,
             'throttle' => 60,
         ],
     ],
@@ -116,7 +116,7 @@ return [
     |
     */
 
-    'password_timeout' => 10800,
+    'password_timeout'      => 10800,
 
 
     'default_user_password' => env('DEFAULT_USER_PASSWORD', 'MmuX82bq9Q1YYLd4M39g'),
