@@ -12,6 +12,7 @@ class ResetCodePassword extends Model
         'email',
         'code',
         'created_at',
+        'username',
     ];
     public $timestamps = false;
 

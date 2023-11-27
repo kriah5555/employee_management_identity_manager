@@ -14,6 +14,7 @@ use App\Models\{
 };
 use App\Models\User\User;
 use App\Models\User\UserBasicDetails;
+use App\Models\User\UserContactDetails;
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -44,7 +45,6 @@ class UserService
         $this->userObject = new User();
         $this->basic = new UserBasicDetails();
         $this->invite = new InviteUserTokens();
-
     }
 
     public static function formatCountryAndNationality($raw)
@@ -158,7 +158,14 @@ class UserService
             $username = $request['username'];
 
             // Check if there's a matching record in the database
-            $matchingUser = DB::table('users')->where('email', $email)->where('username', $username)->first();
+            // $matchingUser = DB::table('user_contact_details')->where('email', $email)->where('username', $username)->first();
+
+
+            $matchingUser = User::join('user_contact_details', 'users.id', '=', 'user_contact_details.user_id')
+                ->where('users.username', $username)
+                ->where('user_contact_details.email', $email)
+                ->select('users.id')
+                ->first();
 
             if (!$matchingUser) {
                 return response()->json(['status' => false, 'message' => "Email and username do not match"], 400);
@@ -175,6 +182,7 @@ class UserService
                 'email' => $email,
                 'code' => $code,
                 'created_at' => now(), // Manually set the created_at attribute
+                'username' => $username,
             ]);
 
             // Send an email to the user
@@ -191,43 +199,37 @@ class UserService
     public function resetPassword($request)
     {
         try {
-            $passwordReset = ResetCodePassword::firstWhere('code', $request['otp']);
+        $passwordReset = ResetCodePassword::firstWhere('code', $request['otp']);
 
-            // Check if it has expired: the time is one hour
-            if ($passwordReset->created_at > now()->addMinutes(15)) {
-                $passwordReset->delete();
-                return response(['message' => trans('passwords.code_is_expire')], 422);
-            }
+        // Check if it has expired: the time is one hour
+        if ($passwordReset->created_at > now()->addMinutes(15)) {
+            $passwordReset->delete();
+            return response(['message' => trans('passwords.code_is_expire')], 422);
+        }
 
-            // If the code is valid and not expired, update the user's password
-            $user = User::where('email', $passwordReset->email)->first();
-            $newPassword = $request['new_password'];
-            $confirmPassword = $request['confirm_new_password'];
+        // If the code is valid and not expired, update the user's password
+        $user = User::where('username', $passwordReset->username)->first();
+        $newPassword = $request['new_password'];
+        $confirmPassword = $request['confirm_new_password'];
 
-            // Check if new_password and confirm_password match
-            if ($newPassword === $confirmPassword) {
-                // Hash and save the new password
-                $user->password = Hash::make($newPassword);
-                $user->save();
+        // Check if new_password and confirm_password match
+        if ($newPassword === $confirmPassword) {
+            // Hash and save the new password
+            $user->password = Hash::make($newPassword);
+            $user->save();
 
-                // Delete the used reset code
-                $passwordReset->delete();
+            // Delete the used reset code
+            $passwordReset->delete();
 
-                return response()->json([
-                    'success' => true,
-                    // 'message' => [
-                    //     'code' => $passwordReset->code,
-                    //     'message' => trans('passwords.code_is_valid'),
-                    //     'updated_password' => $newPassword,
-                    // ]
-                    'message' => 'password updated successfully'
-                ], 200);
+            return response()->json([
+                'success' => true,
 
-            } else {
+                'message' => 'password updated successfully'
+            ], 200);
+        } else {
 
             return response()->json(['status' => false, 'message' => 'New password and confirmation do not match.'], 400);
-
-            }
+        }
         } catch (\Exception $e) {
             return response(['message' => 'An error occurred while resetting the password.'], 500);
         }
@@ -245,9 +247,24 @@ class UserService
 
     public function updateEmployee($request)
     {
-        dd($request);
+        $id = $request['user_id'];
 
+        // Select all columns from the 'users' table
+    //     $userDetails = User::where('id', $id)->first();
+    //     $userDetails = User::select('users.*', 'user_contact_details.*')
+    // ->join('user_contact_details', 'users.id', '=', 'user_contact_details.user_id')
+    // ->get();
+    $userDetails = User::with('user_basic_details')->find($id);
+
+
+
+        if (!$userDetails) {
+            // Handle not found case
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Print or return the 'users' table details
+        return response()->json(['userDetails' => $userDetails]);
     }
-
 
 }

@@ -21,7 +21,7 @@ class ForgotPassword extends ApiRequest
 
         if (str_contains($path, 'employee/forgot-password')) {
             $rules = [
-                'email' => 'required|email|exists:users',
+                'email' => 'required|email|exists:user_contact_details',
                 'username' => 'required|exists:users',
             ];
         } else {
