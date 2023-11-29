@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/testing', function () {
     return response()->json([
-        'message' => 'Test API.'
+        'message' => 'Identity manager.'
     ]);
 });
 
