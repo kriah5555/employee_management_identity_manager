@@ -83,7 +83,6 @@ class UserService
 
     public function createUserName($userName, $flag = null)
     {
-
         if ($this->userObject->checkUserNameExist($userName . $flag) == null) {
             return $userName . $flag;
         } else {
