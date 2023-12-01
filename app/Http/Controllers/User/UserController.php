@@ -185,11 +185,7 @@ class UserController extends Controller
         return $messages;
     }
 
-    public function updateEmployee(UpdateEmployeeRule $request)
-    {
-        $messages = $this->userService->updateEmployee($request->validated());
-        return $messages;
-    }
+
 
 
 }

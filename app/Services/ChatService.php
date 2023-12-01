@@ -89,7 +89,6 @@ class ChatService
     public function sendMessage($request)
     {
         try {
-
             $attachmentPath = null;
 
             if ($request->hasFile('file')) {

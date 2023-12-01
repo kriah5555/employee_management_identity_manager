@@ -53,6 +53,7 @@ class ForgotPassword extends ApiRequest
         ];
     }
 
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
