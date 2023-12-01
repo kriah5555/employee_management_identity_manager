@@ -2,16 +2,17 @@
 
 namespace App\Models\User;
 
+use App\Models\DeviceToken;
+use Laravel\Passport\HasApiTokens;
+use App\Models\User\UserBankAccount;
+use App\Models\User\UserBasicDetails;
+use App\Models\User\UserFamilyDetails;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasPermissions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Traits\HasPermissions;
-use App\Models\User\UserBasicDetails;
-use App\Models\User\UserBankAccount;
-use App\Models\User\UserFamilyDetails;
-use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class User extends Authenticatable
@@ -79,8 +80,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserFamilyDetails::class);
     }
+
+    // public function validateForPassportPasswordGrant($password)
+    // {
+    //     return Hash::check($password, $this->password);
+    // }
+
     public function conversations()
     {
         return $this->belongsToMany(Conversation::class, 'conversation_users', 'user_id', 'conversation_id');
+    }
+
+    public function deviceToken()
+    {
+        return $this->hasOne(DeviceToken::class);
     }
 }

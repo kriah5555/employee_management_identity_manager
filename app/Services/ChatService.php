@@ -167,7 +167,7 @@ class ChatService
     {
 
         try {
-            
+
             $message = Message::find($request->message_id);
 
             if (!$message) {

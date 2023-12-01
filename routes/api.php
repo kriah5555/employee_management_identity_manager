@@ -3,12 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Roles\RolesController;
-use App\Http\Controllers\ChatController;
 
-use App\Http\Controllers\{LanguagesController};
+
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\User\{GenderController, MaritalStatusController, UserController};
-
+use App\Http\Controllers\User\{GenderController, MaritalStatusController,  LanguagesController, UserController};
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -141,3 +140,11 @@ Route::group(['middleware' => 'setactiveuser'], function () {
 
 //update user details
 Route::put('update-employee', [UserController::class, 'updateEmployee']);
+// Check if a conversation exists between two users or create a new one
+
+Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::get('/get-conversation/{conversationId}', [ChatController::class, 'getMessagesInConversationFormat']);
+Route::get('/get-messages/{conversationId}', [ChatController::class, 'getMessages']);
+Route::delete('/conversation/{id}', [ChatController::class, 'deleteConversation']);
+Route::delete('/message/{id}', [ChatController::class, 'deleteMessage']);
