@@ -43,35 +43,36 @@ class AuthService
     public function generateUserTokens(array $credentials)
     {
         try {
+            $user = Auth::user();
 
-                $user = Auth::user();
-
+            if (isset($credentials['device_token'])) {
                 $this->handleDeviceToken($user, $credentials['device_token']);
+            }
 
+            $oClient = $this->getOAuthClient();
 
-                $oClient = $this->getOAuthClient();
+            $response = microserviceRequest(
+                '/service/identity-manager/oauth/token',
+                'POST',
+                array_merge($credentials, [
+                    'grant_type'    => 'password',
+                    'client_id'     => $oClient->id,
+                    'client_secret' => $oClient->secret,
+                    'scope'         => '*',
+                ])
+            );
 
-                $response = microserviceRequest(
-                    '/service/identity-manager/oauth/token',
-                    'POST',
-                    array_merge($credentials, [
-                        'grant_type'    => 'password',
-                        'client_id'     => $oClient->id,
-                        'client_secret' => $oClient->secret,
-                        'scope'         => '*',
-                    ])
-                );
+            if ($response->getStatusCode() != 200) {
+                throw new \Exception(data_get($response->json(), 'message', 'Error in generating token'));
+            }
 
-                if ($response->getStatusCode() != 200) {
-                    throw new \Exception(data_get($response->json(), 'message', 'Error in generating token'));
-                }
-
-                return $response->json();
+            return $response->json();
 
         } catch (\Exception $e) {
             throw $e;
         }
     }
+
 
 
 protected function handleDeviceToken($user, $deviceTokenValue)
@@ -82,7 +83,7 @@ protected function handleDeviceToken($user, $deviceTokenValue)
         ->first();
 
     if ($existingUserWithToken) {
-        
+
         $existingUserWithToken->update(['user_id' => $user->id]);
 
     }

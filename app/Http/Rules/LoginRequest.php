@@ -23,7 +23,7 @@ class LoginRequest extends ApiRequest
         return [
             'username' => 'required|string|max:255',
             'password' => 'required|min:6',
-            'device_token'=> 'nullable|max:255',
+            'device_token'=> 'max:255',
             // 'password' => 'required|min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/|confirmed'
         ];
     }
