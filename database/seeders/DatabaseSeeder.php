@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
                 // CountriesSeeder::class,
                 // LanguagesSeeder::class,
-            RolesAndPermissionsSeeder::class,
+                // RolesAndPermissionsSeeder::class,
                 // FileTypesSeeder::class,
             SuperdminSeeder::class
         ]);
