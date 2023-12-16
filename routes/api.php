@@ -50,8 +50,6 @@ Route::middleware('validate.api.token')->group(function () {
 
     Route::get('/user-details', [UserController::class, 'getUserDetails']);
 
-    Route::get('/logout', [AuthController::class, 'logout']);
-
     Route::get('/validate-token', function () {
         return response()->json([
             'success' => true,
@@ -70,8 +68,9 @@ Route::controller(LanguagesController::class)->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('user', 'AuthController@user');
-    Route::post('logout', 'AuthController@logout');
 });
+
+Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::group([
     // 'middleware' => ['admin','auth'],

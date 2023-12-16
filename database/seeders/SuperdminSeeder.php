@@ -15,9 +15,9 @@ class SuperdminSeeder extends Seeder
     public function run()
     {
         $users = [
-            ['username' => 'admin', 'first_name' => 'admin', 'last_name' => 'admin', 'password' => 'Indii_2023$', 'role' => 'superadmin'],
-            ['username' => 'leonantheunis', 'first_name' => 'Leon', 'last_name' => 'Antheunis', 'password' => 'Indii_2023$', 'role' => 'admin'],
-            ['username' => 'sylviesymons', 'first_name' => 'Sylvie', 'last_name' => 'Symons', 'password' => 'Indii_2023$', 'role' => 'admin'],
+            ['username' => 'admin', 'first_name' => 'admin', 'last_name' => 'admin', 'password' => 'Indii_2023$'],
+            ['username' => 'leonantheunis', 'first_name' => 'Leon', 'last_name' => 'Antheunis', 'password' => 'Indii_2023$'],
+            ['username' => 'sylviesymons', 'first_name' => 'Sylvie', 'last_name' => 'Symons', 'password' => 'Indii_2023$'],
         ];
 
         foreach ($users as $user) {
@@ -27,8 +27,8 @@ class SuperdminSeeder extends Seeder
                 $userObj = User::create([
                     'username' => $user['username'],
                     'password' => Hash::make($user['password']),
+                    'is_admin' => true
                 ]);
-                $userObj->assignRole($user['role']);
                 $userBasicDetails['user_id'] = $userAddressDetails['user_id'] = $userContactDetails['user_id'] = $userFamilyDetails['user_id'] = $userObj->id;
                 $userBasicDetails['first_name'] = $user['first_name'];
                 $userBasicDetails['last_name'] = $user['last_name'];
