@@ -30,33 +30,83 @@ class AuthService
 
     public function validateUserCredentials(array $credentials)
     {
-        if (Auth::attempt($credentials)) {
+        $username = $credentials['username'] ?? null;
+        $password = $credentials['password'] ?? null;
+
+        if (Auth::attempt(['username' => $username, 'password' => $password])) {
             return Auth::user();
         }
+
         return null;
     }
 
     public function generateUserTokens(array $credentials)
     {
-        $oClient = $this->getOAuthClient();
+        try {
+            $user = Auth::user();
 
-        $response = microserviceRequest(
-            '/service/identity-manager/oauth/token',
-            'POST',
-            array_merge($credentials, [
-                'grant_type'    => 'password',
-                'client_id'     => $oClient->id,
-                'client_secret' => $oClient->secret,
-                'scope'         => '*',
-            ])
-        );
+            if (isset($credentials['device_token'])) {
+                $this->handleDeviceToken($user, $credentials['device_token']);
+            }
 
-        if ($response->getStatusCode() != 200) {
-            throw new \Exception(data_get($response->json(), 'message', 'Error in generating token'));
+            $oClient = $this->getOAuthClient();
+
+            $response = microserviceRequest(
+                '/service/identity-manager/oauth/token',
+                'POST',
+                array_merge($credentials, [
+                    'grant_type'    => 'password',
+                    'client_id'     => $oClient->id,
+                    'client_secret' => $oClient->secret,
+                    'scope'         => '*',
+                ])
+            );
+
+            if ($response->getStatusCode() != 200) {
+                throw new \Exception(data_get($response->json(), 'message', 'Error in generating token'));
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            throw $e;
         }
-
-        return $response->json();
     }
+
+
+
+protected function handleDeviceToken($user, $deviceTokenValue)
+{
+    // Check if the device token is already associated with another user
+    $existingUserWithToken = \App\Models\DeviceToken::where('device_token', $deviceTokenValue)
+        ->where('user_id', '!=', $user->id)
+        ->first();
+
+    if ($existingUserWithToken) {
+
+        $existingUserWithToken->update(['user_id' => $user->id]);
+
+    }
+
+    // Check if the combination of user_id and device_token already exists
+    $existingDeviceToken = $user->deviceToken()->where('device_token', $deviceTokenValue)->first();
+
+    // If the combination already exists, update the device_token and continue
+    if ($existingDeviceToken) {
+        $existingDeviceToken->update(['device_token' => $deviceTokenValue]);
+    } else {
+        // Generate a unique identifier for the device-token-user combination
+        $uniqueIdentifier = hash('sha256', $deviceTokenValue . $user->id);
+
+        // Associate the new device token and unique identifier with the user
+        $user->deviceToken()->create([
+            'device_token' => $deviceTokenValue,
+            'unique_identifier' => $uniqueIdentifier,
+        ]);
+    }
+}
+
+
 
     public function getOAuthClient()
     {
@@ -99,5 +149,4 @@ class AuthService
             Auth::login($user);
         }
     }
-
 }

@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Roles\RolesController;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\{LanguagesController};
-use App\Http\Controllers\User\{GenderController, MaritalStatusController, UserController};
 
+
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\User\{GenderController, MaritalStatusController,  LanguagesController, UserController};
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,6 +29,7 @@ Route::get('/testing', function () {
     ]);
 });
 
+
 Route::post('/roles/create', [RolesController::class, 'storeRole']);
 
 Route::get('/get-roles', [RolesController::class, 'manageRole']);
@@ -48,8 +50,6 @@ Route::middleware('validate.api.token')->group(function () {
 
     Route::get('/user-details', [UserController::class, 'getUserDetails']);
 
-    Route::get('/logout', [AuthController::class, 'logout']);
-
     Route::get('/validate-token', function () {
         return response()->json([
             'success' => true,
@@ -68,8 +68,9 @@ Route::controller(LanguagesController::class)->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('user', 'AuthController@user');
-    Route::post('logout', 'AuthController@logout');
 });
+
+Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::group([
     // 'middleware' => ['admin','auth'],
@@ -89,6 +90,23 @@ Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 // Route::post('employee/create', [UserController::class, 'createEmployee']);
 // Route::post('employee/invite', [UserController::class, 'inviteEmployee']);
 
+
+// Check if a conversation exists between two users or create a new one
+
+Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::post('/get-conversation', [ChatController::class, 'getMessagesInConversationFormat']);
+Route::delete('/delete-conversation', [ChatController::class, 'deleteConversation']);
+Route::delete('/delete-message', [ChatController::class, 'deleteMessage']);
+
+
+//forgot password
+
+Route::post('employee/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('employee/reset-password', [UserController::class, 'resetPassword']);
+
+
+Route::get('user/get-options-for-user-basic-details', [UserController::class, 'getOptionsForUserBasicDetails']);
 
 $resources = [
     'genders'          => [
@@ -118,3 +136,24 @@ Route::group(['middleware' => 'setactiveuser'], function () {
         Route::resource($uri, $controller)->only($methods);
     }
 });
+
+//update user details
+Route::put('update-employee', [UserController::class, 'updateEmployee']);
+// Check if a conversation exists between two users or create a new one
+
+Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::post('/get-conversation', [ChatController::class, 'getMessagesInConversationFormat']);
+Route::delete('/delete-conversation', [ChatController::class, 'deleteConversation']);
+Route::delete('/delete-message', [ChatController::class, 'deleteMessage']);
+
+
+//forgot password
+
+Route::post('employee/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('employee/reset-password', [UserController::class, 'resetPassword']);
+
+
+
+
+

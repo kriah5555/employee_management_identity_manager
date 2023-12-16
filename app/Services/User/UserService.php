@@ -14,8 +14,14 @@ use App\Models\{
 };
 use App\Models\User\User;
 use App\Models\User\UserBasicDetails;
+use App\Models\User\UserContactDetails;
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendCodeResetPassword;
+use App\Models\ResetCodePassword;
+use Illuminate\Support\Facades\DB;
 
 use function PHPSTORM_META\type;
 
@@ -39,7 +45,6 @@ class UserService
         $this->userObject = new User();
         $this->basic = new UserBasicDetails();
         $this->invite = new InviteUserTokens();
-
     }
 
     public static function formatCountryAndNationality($raw)
@@ -78,7 +83,6 @@ class UserService
 
     public function createUserName($userName, $flag = null)
     {
-
         if ($this->userObject->checkUserNameExist($userName . $flag) == null) {
             return $userName . $flag;
         } else {
@@ -146,6 +150,89 @@ class UserService
         //we have trigger mail funciton from here.
     }
 
+    public function forgotPassword($request)
+    {
+        try {
+            $email = $request['email']; // Get the email from the request
+            $username = $request['username'];
+
+            // Check if there's a matching record in the database
+            // $matchingUser = DB::table('user_contact_details')->where('email', $email)->where('username', $username)->first();
+
+
+            $matchingUser = User::join('user_contact_details', 'users.id', '=', 'user_contact_details.user_id')
+                ->where('users.username', $username)
+                ->where('user_contact_details.email', $email)
+                ->select('users.id')
+                ->first();
+
+            if (!$matchingUser) {
+                return response()->json(['status' => false, 'message' => "Email and username do not match"], 400);
+            }
+
+            // Delete all old codes that the user sent before.
+            ResetCodePassword::where('email', $email)->delete();
+
+            // Generate a random code
+            $code = mt_rand(100000, 999999);
+
+            // Create a new code with the current timestamp
+            ResetCodePassword::create([
+                'email' => $email,
+                'code' => $code,
+                'created_at' => now(), // Manually set the created_at attribute
+                'username' => $username,
+            ]);
+
+            // Send an email to the user
+            Mail::to($email)->send(new SendCodeResetPassword($code));
+
+            return response()->json(['status' => true, 'message' => "OTP has been sent to the email id."], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+
+    public function resetPassword($request)
+    {
+        try {
+        $passwordReset = ResetCodePassword::firstWhere('code', $request['otp']);
+
+        // Check if it has expired: the time is one hour
+        if ($passwordReset->created_at > now()->addMinutes(15)) {
+            $passwordReset->delete();
+            return response(['message' => trans('passwords.code_is_expire')], 422);
+        }
+
+        // If the code is valid and not expired, update the user's password
+        $user = User::where('username', $passwordReset->username)->first();
+        $newPassword = $request['new_password'];
+        $confirmPassword = $request['confirm_new_password'];
+
+        // Check if new_password and confirm_password match
+        if ($newPassword === $confirmPassword) {
+            // Hash and save the new password
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            // Delete the used reset code
+            $passwordReset->delete();
+
+            return response()->json([
+                'success' => true,
+
+                'message' => 'password updated successfully'
+            ], 200);
+        } else {
+
+            return response()->json(['status' => false, 'message' => 'New password and confirmation do not match.'], 400);
+        }
+        } catch (\Exception $e) {
+            return response(['message' => 'An error occurred while resetting the password.'], 500);
+        }
+    }
 
     public function getDependentSpouseOptions()
     {
@@ -156,4 +243,6 @@ class UserService
     {
         return config('constants.LANGUAGE_OPTIONS');
     }
+
+
 }
