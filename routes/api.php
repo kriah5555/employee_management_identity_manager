@@ -6,7 +6,7 @@ use App\Http\Controllers\Roles\RolesController;
 
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\User\{GenderController, MaritalStatusController,  LanguagesController, UserController};
+use App\Http\Controllers\User\{GenderController, MaritalStatusController,  LanguagesController, UserController, UserProfilePictureController};
 use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +152,10 @@ Route::delete('/delete-message', [ChatController::class, 'deleteMessage']);
 
 Route::post('employee/forgot-password', [UserController::class, 'forgotPassword']);
 Route::post('employee/reset-password', [UserController::class, 'resetPassword']);
+
+Route::get('employee-profile-picture', [UserProfilePictureController::class, 'getEmployeeProfilePicture']);
+Route::post('update-employee-profile-picture', [UserProfilePictureController::class, 'updateEmployeeProfilePicture']);
+Route::delete('delete-employee-profile-picture', [UserProfilePictureController::class, 'deleteEmployeeProfilePicture']);
 
 
 
