@@ -20,7 +20,19 @@ class UserProfilePictureController extends Controller
     public function getEmployeeProfilePicture()
     {
         $userID = Auth::guard('api')->user()->id;
+        try {
         $employeeProfilePicture = $this->userProfilePictureService->userProfilePictureById($userID);
+
+            return response()->json([
+                'success' => true,
+                'data'    => $employeeProfilePicture
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
         return $employeeProfilePicture;
     }
 

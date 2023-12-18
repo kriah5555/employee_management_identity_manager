@@ -37,7 +37,7 @@ class UserProfilePictureService
                 ['image_name' => $originalFileName, 'image_path' => $attachmentPath]
             );
 
-            $response = ['status' => true, 'message' => 'Profile picture updated successfully'];
+            $response = ['success' => true, 'message' => 'Profile picture updated successfully'];
 
             if ($attachmentPath && $oldFileName) {
                 $response['data']['file_path'] = asset('storage/' . $attachmentPath);
@@ -51,7 +51,7 @@ class UserProfilePictureService
 
             return response()->json($response, 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -69,9 +69,13 @@ class UserProfilePictureService
             return ['success' => false, 'message' => 'User profile picture not found'];
         }
 
-        $response['data']['file_path'] = asset('storage/' . $userProfile->image_path);
+        if($userProfile->image_path){
+        $response['image_path'] = asset('storage/' . $userProfile->image_path);
+        }else{
+          $response=  null;
+        }
 
-        return response()->json($response, 200);
+        return $response;
     }
 
     public function deleteUserProfilePictureById($userId)
