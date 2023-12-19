@@ -18,7 +18,7 @@ class UserProfilePictureService
 
             if ($values->hasFile('image_path')) {
                 $values->validate([
-                    'image_path' => 'file',
+                    'image_path' => 'file|mimes:jpg,jpeg,png',
                 ]);
 
                 // Get the original file name
