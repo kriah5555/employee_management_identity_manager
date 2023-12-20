@@ -8,6 +8,7 @@ use App\Models\User\UserBankAccount;
 use App\Models\User\UserBasicDetails;
 use App\Models\User\UserFamilyDetails;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\User\UserProfilePicture;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -94,5 +95,10 @@ class User extends Authenticatable
     public function deviceToken()
     {
         return $this->hasOne(DeviceToken::class);
+    }
+
+    public function userProfilePicture()
+    {
+        return $this->hasOne(UserProfilePicture::class);
     }
 }
