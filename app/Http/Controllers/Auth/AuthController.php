@@ -37,7 +37,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $data = $this->authService->loginMobile($request->validated());
+            $data = $this->authService->mobileLogin($request->validated());
             $data['token'] = $this->authService->generateUserTokens($request->validated());
             return returnResponse(
                 [
@@ -58,25 +58,15 @@ class AuthController extends Controller
     public function webLogin(LoginRequest $request)
     {
         try {
-            $user = $this->authService->validateUserCredentials($request->validated());
-            if (!$user) {
-                return returnUnauthorizedResponse('The user credentials were incorrect.');
-            } elseif ($this->checkWebAppAccess($user)) {
-                $token = $this->authService->generateUserTokens($request->validated());
-                return returnResponse(
-                    [
-                        'success' => true,
-                        'data'    => [
-                            'uid'      => $user->id,
-                            'username' => $user->username,
-                            'token'    => $token,
-                        ]
-                    ],
-                    JsonResponse::HTTP_OK,
-                );
-            } else {
-                return returnUnauthorizedResponse('No access.');
-            }
+            $data = $this->authService->webLogin($request->validated());
+            $data['token'] = $this->authService->generateUserTokens($request->validated());
+            return returnResponse(
+                [
+                    'success' => true,
+                    'data'    => $data
+                ],
+                JsonResponse::HTTP_OK,
+            );
 
         } catch (\Exception $e) {
             return returnIntenalServerErrorResponse($e->getMessage());

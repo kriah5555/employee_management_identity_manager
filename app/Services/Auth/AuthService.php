@@ -146,7 +146,20 @@ class AuthService
         }
     }
 
-    public function loginMobile($values)
+    public function mobileLogin($values)
+    {
+        $user = $this->validateUserCredentials($values);
+        if ($user) {
+            if (isset($values['device_token'])) {
+                $this->handleDeviceToken($user, $values['device_token']);
+            }
+            return $this->getMobileLoginResponse($user);
+        } else {
+            throw new AuthenticationException("The user credentials were incorrect.");
+        }
+    }
+
+    public function webLogin($values)
     {
         $user = $this->validateUserCredentials($values);
         if ($user) {
@@ -161,28 +174,25 @@ class AuthService
 
     public function getMobileLoginResponse($user)
     {
-        $managerFlow = 0;
-        $employeeFlow = 0;
+        $webAccess = false;
         if ($user->is_admin || $user->is_moderator) {
-            $managerFlow = 1;
-        }
-        $companyUsers = CompanyUser::where('user_id', $user->id)->get();
-        foreach ($companyUsers as $companyUser) {
-            if ($companyUser->hasPermissionTo('Web app access')) {
-                $managerFlow = 1;
-            }
-            if ($companyUser->hasRole('employee')) {
-                $employeeFlow = 1;
+            $webAccess = true;
+        } else {
+            $companyUsers = CompanyUser::where('user_id', $user->id)->get();
+            foreach ($companyUsers as $companyUser) {
+                if ($companyUser->hasPermissionTo('Web app access')) {
+                    $webAccess = true;
+                }
             }
         }
-        return [
-            'uid'      => $user->id,
-            'username' => $user->username,
-            'name'     => $user->userBasicDetails->first_name . ' ' . $user->userBasicDetails->last_name,
-            'access'   => [
-                'manager_flow'  => $managerFlow,
-                'employee_flow' => $employeeFlow,
-            ]
-        ];
+        if ($webAccess) {
+            return [
+                'uid'      => $user->id,
+                'username' => $user->username,
+                'name'     => $user->userBasicDetails->first_name . ' ' . $user->userBasicDetails->last_name
+            ];
+        } else {
+            throw new AuthenticationException("No access to web application");
+        }
     }
 }
