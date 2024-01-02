@@ -33,6 +33,8 @@ class User extends Authenticatable
         'social_security_number',
         'password',
         'status',
+        'is_admin',
+        'is_moderator'
     ];
 
     /**

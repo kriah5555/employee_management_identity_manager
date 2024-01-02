@@ -6,8 +6,9 @@ use App\Http\Controllers\Roles\RolesController;
 
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\User\{GenderController, MaritalStatusController,  LanguagesController, UserController, UserProfilePictureController};
+use App\Http\Controllers\User\{GenderController, MaritalStatusController, LanguagesController, UserController, UserProfilePictureController};
 use App\Http\Controllers\ChatController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,13 +30,6 @@ Route::get('/testing', function () {
     ]);
 });
 
-
-Route::post('/roles/create', [RolesController::class, 'storeRole']);
-
-Route::get('/get-roles', [RolesController::class, 'manageRole']);
-
-Route::get('/permissions/manage/{editid?}', [PermissionsController::class, 'getPermissions']);
-
 Route::get('/manage-user/{user_id?}', [UserController::class, 'manageUsers']);
 
 Route::post('/create-user', [AuthController::class, 'register']);
@@ -56,14 +50,6 @@ Route::middleware('validate.api.token')->group(function () {
             'uid'     => Auth::guard('api')->user()->id
         ]);
     });
-});
-
-Route::controller(LanguagesController::class)->group(function () {
-    Route::post('language/all', 'index');
-    Route::post('language/store', 'store');
-    Route::post('language/{language}', 'show');
-    Route::post('language/edit/{language}', 'edit');
-    Route::post('language/delete/{language}', 'destroy');
 });
 
 Route::middleware('auth:api')->group(function () {

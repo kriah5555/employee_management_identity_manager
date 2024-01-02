@@ -37,24 +37,18 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $user = $this->authService->validateUserCredentials($request->validated());
-            if (!$user) {
-                return returnUnauthorizedResponse('The user credentials were incorrect.');
-            } else {
-                $token = $this->authService->generateUserTokens($request->validated());
-                return returnResponse(
-                    [
-                        'success' => true,
-                        'data'    => [
-                            'uid'      => $user->id,
-                            'username' => $user->username,
-                            'token'    => $token,
-                        ]
-                    ],
-                    JsonResponse::HTTP_OK,
-                );
-            }
+            $data = $this->authService->loginMobile($request->validated());
+            $data['token'] = $this->authService->generateUserTokens($request->validated());
+            return returnResponse(
+                [
+                    'success' => true,
+                    'data'    => $data
+                ],
+                JsonResponse::HTTP_OK,
+            );
 
+        } catch (AuthenticationException $e) {
+            return returnUnauthorizedResponse($e->getMessage());
         } catch (\Exception $e) {
             return returnIntenalServerErrorResponse($e->getMessage());
         }
