@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\Auth\Permission;
 use App\Models\User\CompanyUser;
 use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Client as OClient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\AuthenticationException;
+use App\Models\Auth\Role;
 
 
 class AuthService
@@ -174,25 +176,31 @@ class AuthService
 
     public function getMobileLoginResponse($user)
     {
-        $webAccess = false;
+        $managerFlow = 0;
+        $employeeFlow = 0;
         if ($user->is_admin || $user->is_moderator) {
-            $webAccess = true;
-        } else {
-            $companyUsers = CompanyUser::where('user_id', $user->id)->get();
-            foreach ($companyUsers as $companyUser) {
-                if ($companyUser->hasPermissionTo('Web app access')) {
-                    $webAccess = true;
-                }
+            $managerFlow = 1;
+        }
+        $companyUsers = CompanyUser::where('user_id', $user->id)->get();
+        $employeeRole = Role::where('name', 'employee')->first();
+        $webAccessPermission = Permission::where('name', 'Web app access')->first();
+        foreach ($companyUsers as $companyUser) {
+            if ($companyUser->hasPermissionTo($webAccessPermission)) {
+                $managerFlow = 1;
+            }
+            if ($companyUser->hasRole($employeeRole)) {
+                $employeeFlow = 1;
             }
         }
-        if ($webAccess) {
-            return [
-                'uid'      => $user->id,
-                'username' => $user->username,
-                'name'     => $user->userBasicDetails->first_name . ' ' . $user->userBasicDetails->last_name
-            ];
-        } else {
-            throw new AuthenticationException("No access to web application");
-        }
+        return [
+            'uid'      => $user->id,
+            'username' => $user->username,
+            'name'     => $user->userBasicDetails->first_name . ' ' . $user->userBasicDetails->last_name,
+            'access'   => [
+                'manager_flow'  => $managerFlow,
+                'employee_flow' => $employeeFlow,
+            ]
+        ];
     }
+
 }

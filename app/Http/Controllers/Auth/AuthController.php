@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Auth\Role;
 use Illuminate\Http\{Request, JsonResponse};
 use Illuminate\Support\Facades\Auth;
 use App\Services\Auth\AuthService;
