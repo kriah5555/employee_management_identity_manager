@@ -49,6 +49,20 @@ return [
             'search_path'    => 'public',
             'sslmode'        => 'prefer',
         ],
+        'master' => [
+            'driver'         => env('MASTER_DB_DRIVER', 'psql'),
+            'url'            => env('MASTER_DB_URL'),
+            'host'           => env('MASTER_DB_HOST', '127.0.0.1'),
+            'port'           => env('MASTER_DB_PORT', '5432'),
+            'database'       => env('MASTER_DB_DATABASE', 'forge'),
+            'username'       => env('MASTER_DB_USERNAME', 'forge'),
+            'password'       => env('MASTER_DB_PASSWORD', ''),
+            'charset'        => 'utf8',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'search_path'    => 'public',
+            'sslmode'        => 'prefer',
+        ],
 
     ],
 

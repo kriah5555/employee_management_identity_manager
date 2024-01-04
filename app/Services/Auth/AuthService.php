@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\User\CompanyUser;
 use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -43,11 +44,6 @@ class AuthService
     public function generateUserTokens(array $credentials)
     {
         try {
-            $user = Auth::user();
-
-            if (isset($credentials['device_token'])) {
-                $this->handleDeviceToken($user, $credentials['device_token']);
-            }
 
             $oClient = $this->getOAuthClient();
 
@@ -75,36 +71,36 @@ class AuthService
 
 
 
-protected function handleDeviceToken($user, $deviceTokenValue)
-{
-    // Check if the device token is already associated with another user
-    $existingUserWithToken = \App\Models\DeviceToken::where('device_token', $deviceTokenValue)
-        ->where('user_id', '!=', $user->id)
-        ->first();
+    protected function handleDeviceToken($user, $deviceTokenValue)
+    {
+        // Check if the device token is already associated with another user
+        $existingUserWithToken = \App\Models\DeviceToken::where('device_token', $deviceTokenValue)
+            ->where('user_id', '!=', $user->id)
+            ->first();
 
-    if ($existingUserWithToken) {
+        if ($existingUserWithToken) {
 
-        $existingUserWithToken->update(['user_id' => $user->id]);
+            $existingUserWithToken->update(['user_id' => $user->id]);
 
+        }
+
+        // Check if the combination of user_id and device_token already exists
+        $existingDeviceToken = $user->deviceToken()->where('device_token', $deviceTokenValue)->first();
+
+        // If the combination already exists, update the device_token and continue
+        if ($existingDeviceToken) {
+            $existingDeviceToken->update(['device_token' => $deviceTokenValue]);
+        } else {
+            // Generate a unique identifier for the device-token-user combination
+            $uniqueIdentifier = hash('sha256', $deviceTokenValue . $user->id);
+
+            // Associate the new device token and unique identifier with the user
+            $user->deviceToken()->create([
+                'device_token'      => $deviceTokenValue,
+                'unique_identifier' => $uniqueIdentifier,
+            ]);
+        }
     }
-
-    // Check if the combination of user_id and device_token already exists
-    $existingDeviceToken = $user->deviceToken()->where('device_token', $deviceTokenValue)->first();
-
-    // If the combination already exists, update the device_token and continue
-    if ($existingDeviceToken) {
-        $existingDeviceToken->update(['device_token' => $deviceTokenValue]);
-    } else {
-        // Generate a unique identifier for the device-token-user combination
-        $uniqueIdentifier = hash('sha256', $deviceTokenValue . $user->id);
-
-        // Associate the new device token and unique identifier with the user
-        $user->deviceToken()->create([
-            'device_token' => $deviceTokenValue,
-            'unique_identifier' => $uniqueIdentifier,
-        ]);
-    }
-}
 
 
 
@@ -147,6 +143,56 @@ protected function handleDeviceToken($user, $deviceTokenValue)
         if ($user) {
             // Log in the user
             Auth::login($user);
+        }
+    }
+
+    public function mobileLogin($values)
+    {
+        $user = $this->validateUserCredentials($values);
+        if ($user) {
+            if (isset($values['device_token'])) {
+                $this->handleDeviceToken($user, $values['device_token']);
+            }
+            return $this->getMobileLoginResponse($user);
+        } else {
+            throw new AuthenticationException("The user credentials were incorrect.");
+        }
+    }
+
+    public function webLogin($values)
+    {
+        $user = $this->validateUserCredentials($values);
+        if ($user) {
+            if (isset($values['device_token'])) {
+                $this->handleDeviceToken($user, $values['device_token']);
+            }
+            return $this->getMobileLoginResponse($user);
+        } else {
+            throw new AuthenticationException("The user credentials were incorrect.");
+        }
+    }
+
+    public function getMobileLoginResponse($user)
+    {
+        $webAccess = false;
+        if ($user->is_admin || $user->is_moderator) {
+            $webAccess = true;
+        } else {
+            $companyUsers = CompanyUser::where('user_id', $user->id)->get();
+            foreach ($companyUsers as $companyUser) {
+                if ($companyUser->hasPermissionTo('Web app access')) {
+                    $webAccess = true;
+                }
+            }
+        }
+        if ($webAccess) {
+            return [
+                'uid'      => $user->id,
+                'username' => $user->username,
+                'name'     => $user->userBasicDetails->first_name . ' ' . $user->userBasicDetails->last_name
+            ];
+        } else {
+            throw new AuthenticationException("No access to web application");
         }
     }
 }
