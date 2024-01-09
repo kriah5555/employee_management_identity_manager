@@ -16,31 +16,74 @@ use Illuminate\Support\Facades\Validator;
 class ChatService
 {
 
+    public function getConversationIDs($request)
+    {
+        try {
+            $senderId = $request->input('sender_id');
+            $receiverIds = $request->input('receiver_ids');
+
+            // Check if all receiver IDs exist in the User table
+            $validReceiverIds = User::whereIn('id', $receiverIds)->pluck('id')->all();
+
+            if (count($validReceiverIds) !== count($receiverIds)) {
+                return response()->json(['success' => false, 'message' => 'Invalid receiver IDs provided'], 400);
+            }
+
+            // Remove senderId from the receiverIds array
+            $receiverIds = array_diff($receiverIds, [$senderId]);
+
+            // Check if there's any conversation involving the sender
+            $senderConversations = Conversation::whereHas('users', function ($query) use ($senderId) {
+                $query->where('user_id', $senderId);
+            })->get();
+
+        
+            $conversationIds = [];
+
+            foreach ($receiverIds as $receiverId) {
+                // Check if there's an existing conversation between sender and receiver
+                $conversation = $senderConversations->first(function ($conversation) use ($receiverId) {
+                    return $conversation->users->contains('id', $receiverId);
+                });
+
+                // If conversation exists, add its ID to the array
+                if ($conversation) {
+                    $conversationIds[] = $conversation->id;
+                }
+            }
+
+            return response()->json(['success' => true, 'conversation_ids' => $conversationIds], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
 
     public function getMessagesInConversationFormat($request)
     {
         // dd($request->toarray());
         try {
-            $senderId = $request->input('sender_id');
-            $receiverId = $request->input('receiver_id');
+            $conversationID = $request->input('conversation_id');
+            // $receiverId = $request->input('receiver_id');
 
-            // Find the conversation based on sender and receiver IDs
-            $conversation = DB::table('conversation_users as cu1')
-                ->join('conversation_users as cu2', 'cu1.conversation_id', '=', 'cu2.conversation_id')
-                ->where('cu1.user_id', $senderId)
-                ->where('cu2.user_id', $receiverId)
-                ->select('cu1.conversation_id')
-                ->first();
+            // // Find the conversation based on sender and receiver IDs
+            // $conversation = DB::table('conversation_users as cu1')
+            //     ->join('conversation_users as cu2', 'cu1.conversation_id', '=', 'cu2.conversation_id')
+            //     ->where('cu1.user_id', $senderId)
+            //     ->where('cu2.user_id', $receiverId)
+            //     ->select('cu1.conversation_id')
+            //     ->first();
 
 
-            if (!$conversation) {
-                return response()->json(['status' => false, 'message' => 'Conversation is not available'], 404);
+            if (!$conversationID) {
+                return response()->json(['success' => false, 'message' => 'ConversationID is not available'], 404);
             }
 
             // dd($conversation->conversation_id);
 
 
-            $messages = Message::where('conversation_id', $conversation->conversation_id)
+            $messages = Message::where('conversation_id', $conversationID)
                 ->orderBy('created_at', 'asc')
                 ->get();
 
@@ -64,9 +107,9 @@ class ChatService
                 ];
             }
 
-            return response()->json(['status' => true, 'conversation_data' => $formattedMessages], 200);
+            return response()->json(['success' => true, 'conversation_data' => $formattedMessages], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -90,7 +133,7 @@ class ChatService
             if (count($validReceiverIds) !== count($receiverIds)) {
                 // Rollback the transaction if validation fails
                 DB::rollBack();
-                return response()->json(['status' => false, 'message' => 'Invalid receiver IDs provided'], 400);
+                return response()->json(['success' => false, 'message' => 'Invalid receiver IDs provided'], 400);
             }
 
             // Create messages for each receiver
@@ -115,7 +158,7 @@ class ChatService
                     // Generate a unique identifier (timestamp-based)
                     $uniqueIdentifier = uniqid();
                     // Concatenate the unique identifier with the original file name
-                    $newFileName =  $senderId.$receiverId.'_'. $uniqueIdentifier . '_' . $originalFileName;
+                    $newFileName =  $senderId . $receiverId . '_' . $uniqueIdentifier . '_' . $originalFileName;
                     // Store the file with the new name
                     $attachmentPath = $request->file('image')->storeAs('attachments', $newFileName, 'public');
                 }
@@ -148,18 +191,18 @@ class ChatService
             DB::commit();
 
             // Construct the full attachment path for response
-            $fullAttachmentPath = $attachmentPath ? asset('storage/' . $attachmentPath) : null;
+            // $fullAttachmentPath = $attachmentPath ? asset('storage/' . $attachmentPath) : null;
 
             return response()->json([
-                'status' => true,
-                'data'=>$messages,
+                'success' => true,
+                // 'data'=>$messages,
 
                 'message' => 'Messages sent successfully'
             ], 200);
         } catch (\Exception $e) {
             // Rollback the transaction on exception
             DB::rollBack();
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -174,7 +217,7 @@ class ChatService
             $conversation = Conversation::find($request->conversation_id);
 
             if (!$conversation) {
-                return response()->json(['status' => false, 'messages' => 'Conversation is not available'], 404);
+                return response()->json(['success' => false, 'messages' => 'Conversation is not available'], 404);
             }
 
             // Get message IDs based on the conversation ID
@@ -193,11 +236,11 @@ class ChatService
 
             DB::commit();
 
-            return response()->json(['status' => true, 'message' => "Conversation deleted successfully"], 200);
+            return response()->json(['success' => true, 'message' => "Conversation deleted successfully"], 200);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -212,29 +255,28 @@ class ChatService
             $message = Message::find($request->message_id);
 
             if (!$message) {
-                return response()->json(['status' => false, 'message' => 'Message is not available'], 404);
+                return response()->json(['success' => false, 'message' => 'Message is not available'], 404);
             }
             $this->deleteMessageImages(($message));
 
             $message->delete();
 
 
-            return response()->json(['status' => true, 'message' => "Message deleted successfully"], 200);
+            return response()->json(['success' => true, 'message' => "Message deleted successfully"], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
 
-public function deleteMessageImages($message)
-{
-    // Assuming attachment_path contains the file path in the public folder
-    $attachmentPath = $message->attachment_path;
+    public function deleteMessageImages($message)
+    {
+        // Assuming attachment_path contains the file path in the public folder
+        $attachmentPath = $message->attachment_path;
 
-    if ($attachmentPath) {
-        // Delete the image file
-        Storage::delete('public/' . $attachmentPath);
+        if ($attachmentPath) {
+            // Delete the image file
+            Storage::delete('public/' . $attachmentPath);
+        }
     }
-}
-
 }

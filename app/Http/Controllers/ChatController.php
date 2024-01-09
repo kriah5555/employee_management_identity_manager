@@ -18,10 +18,10 @@ class ChatController extends Controller
         $this->chatService = $chatService;
     }
 
-    public function createConversation(ChatRequest $request)
+    public function getConversationIDs(ChatRequest $request)
     {
-        $conversation = $this->chatService-> checkConversation($request);
-         return $conversation;
+        $conversationIDS = $this->chatService-> getConversationIDs($request);
+        return $conversationIDS;
     }
 
 

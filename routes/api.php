@@ -127,7 +127,7 @@ Route::group(['middleware' => 'setactiveuser'], function () {
 Route::put('update-employee', [UserController::class, 'updateEmployee']);
 // Check if a conversation exists between two users or create a new one
 
-Route::post('/check-or-create-conversation', [ChatController::class, 'createConversation']);
+Route::post('/get-conversationIDs', [ChatController::class, 'getConversationIDs']);
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::post('/get-conversation', [ChatController::class, 'getMessagesInConversationFormat']);
 Route::delete('/delete-conversation', [ChatController::class, 'deleteConversation']);
