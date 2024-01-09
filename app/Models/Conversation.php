@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User\User;
+use App\Models\ConversationUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -24,6 +25,17 @@ class Conversation extends Model
         return $this->hasMany(Message::class, 'conversation_id', 'id');
     }
 
+    public function ConversationUser()
+    {
+        return $this->hasMany(ConversationUser::class, 'conversation_id', 'id');
+    }
+
+    public function deleteConversationUser()
+    {
+        // Delete all ConversationUser related to this conversation
+        $this->ConversationUser()->delete();
+    }
+
     public function deleteMessages()
     {
         // Delete all messages related to this conversation
@@ -33,7 +45,10 @@ class Conversation extends Model
     public function deleteConversation()
     {
         // Delete related messages
-        $this->deleteMessages();
+        // $this->deleteMessages();
+        // dd("delete");
+
+        $this->deleteConversationUser();
 
         // Delete the conversation
         $this->delete();

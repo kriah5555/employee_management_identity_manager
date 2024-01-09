@@ -25,9 +25,10 @@ class ChatController extends Controller
     }
 
 
-    public function getMessagesInConversationFormat(ChatRequest $conversationId)
+    public function getMessagesInConversationFormat(ChatRequest $request)
     {
-        $formattedMessages = $this->chatService->getMessagesInConversationFormat($conversationId);
+        // dd($request);
+        $formattedMessages = $this->chatService->getMessagesInConversationFormat($request);
         return $formattedMessages;
     }
 

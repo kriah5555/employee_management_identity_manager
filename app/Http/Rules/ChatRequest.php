@@ -19,24 +19,18 @@ class ChatRequest extends ApiRequest
     {
         $path = $this->getPathInfo(); // Get the path of the current URL
 
-        if (str_contains($path, 'check-or-create-conversation')) {
-            $rules = [
-                'senderId' => 'required|integer|exists:users,id',
-                'receiverIds' => 'required|array',
-                'receiverIds.*' => 'integer|exists:users,id',
-            ];
-        }
 
-         else if(str_contains($path, 'get-conversation')) {
+
+          if(str_contains($path, 'get-conversation')) {
             $rules = [
-                'conversation_id' => 'required|integer|exists:conversations,id',
+                'sender_id' => 'integer|exists:users,id',
+                'recever_id' => 'integer|exists:users,id',
             ];
         }
         else if(str_contains($path, 'send-message')) {
             $rules = [
                 'sender_id' => 'required|integer|exists:users,id',
-                'conversation_id' => 'required|integer|exists:conversations,id',
-                'content' => 'required|string',
+                'content' => 'string',
             ];
         }
         else if(str_contains($path, 'delete-conversation')) {
