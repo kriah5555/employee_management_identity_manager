@@ -40,9 +40,9 @@ class ChatRequest extends ApiRequest
                 'message_id' => 'required|integer|exists:messages,id',
             ];
         }
-        else if(str_contains($path, 'get-conversationIDs')) {
+        else if(str_contains($path, 'fetch-conversationIDs')) {
             $rules = [
-                'sender_id' => 'integer|exists:users,id',
+                'sender_id' => 'required|integer|exists:users,id',
             ];
         }
 
