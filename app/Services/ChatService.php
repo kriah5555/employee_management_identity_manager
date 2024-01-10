@@ -16,47 +16,68 @@ use Illuminate\Support\Facades\Validator;
 class ChatService
 {
 
-    public function getConversationIDs($request)
-    {
-        try {
-            $senderId = $request->input('sender_id');
-            $receiverIds = $request->input('receiver_ids');
+public function getConversationIDs($request)
+{
+    try {
+        $senderId = $request->input('sender_id');
+        $receiverIds = $request->input('receiver_ids');
 
-            // Check if all receiver IDs exist in the User table
-            $validReceiverIds = User::whereIn('id', $receiverIds)->pluck('id')->all();
+        // Check if all receiver IDs exist in the User table
+        $validReceiverIds = User::whereIn('id', $receiverIds)->pluck('id')->all();
 
-            if (count($validReceiverIds) !== count($receiverIds)) {
-                return response()->json(['success' => false, 'message' => 'Invalid receiver IDs provided'], 400);
-            }
-
-            // Remove senderId from the receiverIds array
-            $receiverIds = array_diff($receiverIds, [$senderId]);
-
-            // Check if there's any conversation involving the sender
-            $senderConversations = Conversation::whereHas('users', function ($query) use ($senderId) {
-                $query->where('user_id', $senderId);
-            })->get();
-
-        
-            $conversationIds = [];
-
-            foreach ($receiverIds as $receiverId) {
-                // Check if there's an existing conversation between sender and receiver
-                $conversation = $senderConversations->first(function ($conversation) use ($receiverId) {
-                    return $conversation->users->contains('id', $receiverId);
-                });
-
-                // If conversation exists, add its ID to the array
-                if ($conversation) {
-                    $conversationIds[] = $conversation->id;
-                }
-            }
-
-            return response()->json(['success' => true, 'conversation_ids' => $conversationIds], 200);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        if (count($validReceiverIds) !== count($receiverIds)) {
+            return response()->json(['success' => false, 'message' => 'Invalid receiver IDs provided'], 400);
         }
+
+        // Remove senderId from the receiverIds array
+        $receiverIds = array_diff($receiverIds, [$senderId]);
+
+        // Check if there's any conversation involving the sender
+        $senderConversations = Conversation::whereHas('users', function ($query) use ($senderId) {
+            $query->where('user_id', $senderId);
+        })->get();
+
+        $conversationData = [];
+
+        foreach ($receiverIds as $receiverId) {
+            // Check if there's an existing conversation between sender and receiver
+            $conversation = $senderConversations->first(function ($conversation) use ($receiverId) {
+                return $conversation->users->contains('id', $receiverId);
+            });
+
+            // If conversation exists, fetch usernames and profile pictures, and add data to the array
+            if ($conversation) {
+                $sender = User::find($senderId);
+                $receiver = User::find($receiverId);
+
+                $senderUsername = $sender ? $sender->username : null;
+                $receiverUsername = $receiver ? $receiver->username : null;
+
+                $senderProfilePicture = optional($sender->userProfilePicture)->image_path;
+                $receiverProfilePicture = optional($receiver->userProfilePicture)->image_path;
+
+                // Generate full URLs using the asset function
+                $fullSenderProfilePicture = $senderProfilePicture ? asset('storage/' . $senderProfilePicture) : null;
+                $fullReceiverProfilePicture = $receiverProfilePicture ? asset('storage/' . $receiverProfilePicture) : null;
+
+                $conversationData[] = [
+                    'sender_id' => $senderId,
+                    'sender_username' => $senderUsername,
+                    'receiver_id' => $receiverId,
+                    'receiver_username' => $receiverUsername,
+                    'sender_profile_picture' => $fullSenderProfilePicture,
+                    'receiver_profile_picture' => $fullReceiverProfilePicture,
+                    'conversation_id' => $conversation->id,
+                ];
+            }
+        }
+
+        return response()->json(['success' => true, 'data' => $conversationData], 200);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
+}
+
 
 
 
@@ -135,6 +156,9 @@ class ChatService
                 DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Invalid receiver IDs provided'], 400);
             }
+            
+            $receiverIdsOnly = array_diff($receiverIds, [$senderId]);
+
 
             // Create messages for each receiver
             $messages = [];
@@ -144,7 +168,7 @@ class ChatService
                 $query->where('user_id', $senderId);
             })->get();
 
-            foreach ($receiverIds as $receiverId) {
+            foreach ($receiverIdsOnly as $receiverId) {
                 // Check if there's an existing conversation between sender and receiver
                 $conversation = $senderConversations->first(function ($conversation) use ($receiverId) {
                     return $conversation->users->contains('id', $receiverId);
